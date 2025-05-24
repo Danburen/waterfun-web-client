@@ -52,7 +52,7 @@ onBeforeMount(()=>{
              class=""
              @click.prevent="getVerifyingCode"
              :disabled="countDown > 0">
-    {{ countDown > 0 ? countDown : $t('auth.btn.get-verification-code') }}
+    {{ countDown > 0 ? $t('auth.count-down',{countDown})  : $t('auth.btn.get-verification-code') }}
   </el-button>
 </template>
 

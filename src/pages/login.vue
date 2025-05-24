@@ -1,37 +1,95 @@
 <script setup lang="ts">
 import axios from "axios";
 import request from "@/utils/axiosRequest";
-import {ref, reactive, onMounted, onBeforeMount} from "vue";
-import {ElMessage} from "element-plus";
+import {ref, reactive, onMounted, onBeforeMount, nextTick} from "vue";
+import {ElMessage, type FormInstance, type FormRules, type TabsPaneContext} from "element-plus";
 import { deBounce , throttle} from "@/utils/TriggerControl.js"
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import AuthBox from "~/components/auth/authBox.vue";
 import type { LoginRequest , LoginType } from '@/types/LoginRequest'
-import { AUTH_USERNAME_REGEX_MAP } from "~/utils/regex";
+import { validateUsername , validatePassword , validateVerifyCode} from "~/utils/Validator";
+import type {ElInput} from "../../.nuxt/components";
+import {undefined} from "zod";
 
 definePageMeta({
   ssr: false,
 })
 
+type LoginTabType = 'password'|'fast-auth';
+
 const i18n = useI18n();
-const captchaImage = ref('')
-const router = useRouter()
-const regexMap: Record<LoginType, RegExp> = AUTH_USERNAME_REGEX_MAP;
+const router = useRouter();
 
+const captchaImage = ref('');
+const passAuthForm = ref<FormInstance>();
+const fastAuthForm = ref<FormInstance>();
+const loginTab = ref<LoginTabType>('password');
 
-const loginForm = reactive<LoginRequest>({
+const passLoginForm = reactive({
   username:'',
   password:'',
   captcha:'',
-  loginType: 'password',
+  loginType: 'password' as LoginType,
 })
+
+const fastLoginForm = reactive({
+  username:'',
+  verifyCode:'',
+  loginType: 'sms' as LoginType,
+})
+
+const passAuthRules = reactive<FormRules<typeof passLoginForm>>({
+  username:[{validator: validateUsername('password'),trigger: "blur" }],
+  password:[{validator: validatePassword,trigger: "blur"}],
+  captcha:[{validator: validateVerifyCode, trigger: "blur"}],
+})
+
+const fastAuthRules = reactive<FormRules<typeof fastLoginForm>>({
+  username: [{validator: validateUsername('sms'),trigger: "blur" }],
+  verifyCode: [{validator: validateVerifyCode, trigger: "blur"}],
+})
+
+const resetForm = (passAuthForm: FormInstance | undefined,fastAuthForm: FormInstance | undefined) => {
+  if(!passAuthForm) return;
+  passAuthForm.resetFields();
+  if(!fastAuthForm) return;
+  fastAuthForm.resetFields();
+}
+
+const buildRequest= (loginTabType:LoginTabType):LoginRequest =>{
+  
+}
+
+const submitForm = (form: FormInstance | undefined) => {
+  if(!form) return;
+  form.validate(valid => {
+    if(valid){
+
+    }else{
+      console.log("error");
+    }
+  })
+}
+
+
+watch(()=>fastLoginForm.username,deBounce((value:string)=>{
+  if(loginTab.value === 'fast-auth'){
+      if(value.includes('@')){
+        fastLoginForm.loginType = 'email';
+        fastAuthRules.username = [{validator: validateUsername('email'),trigger: "blur" }];
+      }else{
+        fastLoginForm.loginType = 'sms';
+        fastAuthRules.username = [{validator: validateUsername('sms'),trigger: "blur" }];
+      }
+    }
+},300))
 
 
 const handelLogin = ()=>{
   request.post("auth/login",{
-    username:loginForm.username,
-    password:loginForm.password,
-    captcha:loginForm.captcha,
+    username:passLoginForm.username,
+    password:passLoginForm.password,
+
   }as LoginRequest).then(res=>{
     console.log(res)
     ElMessage({
@@ -41,15 +99,15 @@ const handelLogin = ()=>{
     router.push("home")
   }).catch(err=>{
     console.log(err.response)
-    const messageKey = 'message.error.bad-request.'
+    const t = (key:string) => i18n.t( 'message.error.bad-request.'+ key)
     const errMessage = () => {
       switch (err.data.code) {
-        case 40001: return i18n.t(messageKey + 'username-empty');
-        case 40002: return i18n.t(messageKey + 'password-empty');
-        case 40003: return i18n.t(messageKey + 'username-or-password-incorrect');
-        case 40004: return i18n.t(messageKey + 'captcha-empty');
-        case 40006: return i18n.t(messageKey + 'captcha-expired');
-        case 40007: return i18n.t(messageKey + 'captcha-incorrect');
+        case 40001: return t('username-empty');
+        case 40002: return t('password-empty');
+        case 40003: return t('username-or-password-incorrect');
+        case 40004: return t('captcha-empty');
+        case 40006: return t('captcha-expired');
+        case 40007: return t('captcha-incorrect');
       }
     }
     ElMessage({
@@ -65,10 +123,7 @@ const handelLogin = ()=>{
   })
 }
 
-/**
- * Captcha code
- * @type {(...args: any[]) => void}
- */
+
 const refreshCaptcha = throttle(()=>refCaptcha(),1000)
 function refCaptcha(){
   console.log("refCaptcha");
@@ -86,10 +141,6 @@ function refCaptcha(){
   })
 }
 
-function checkUsernameFormat(loginType:LoginType, username:string){
-  
-}
-
 onBeforeMount(()=>{
     refreshCaptcha()
 })
@@ -105,20 +156,31 @@ onBeforeUnmount(() => {
 
 <template>
     <auth-box>
-      <el-tabs type="border-card" :stretch="true">
+      <el-tabs
+          type="border-card"
+          :stretch="true"
+          v-model="loginTab"
+          @tab-click="resetForm(passAuthForm,fastAuthForm)"
+      >
         <!--密码登录-->
-        <el-tab-pane :label="$t('auth.tabs.password')">
-          <el-form label-width="auto" :model="loginForm" class="auth-form">
-            <el-form-item :label="$t('auth.username')">
+        <el-tab-pane :label="$t('auth.tabs.password')" name="password">
+          <el-form
+              ref = 'passAuthForm'
+              label-width="auto"
+              :model="passLoginForm"
+              :rules="passAuthRules"
+              class="auth-form"
+          >
+            <el-form-item :label="$t('auth.username')" prop="username">
               <el-input
-                  v-model="loginForm.username"
+                  v-model="passLoginForm.username"
                   :placeholder="$t('auth.placeholder.username')"
                   class="login-input"
               ></el-input>
             </el-form-item>
-            <el-form-item :label="$t('auth.password')">
+            <el-form-item :label="$t('auth.password')"  prop="password">
               <el-input
-                  v-model="loginForm.password"
+                  v-model="passLoginForm.password"
                   type="password"
                   :placeholder="$t('auth.placeholder.password')"
                   class="login-input"
@@ -126,14 +188,14 @@ onBeforeUnmount(() => {
               ></el-input>
             </el-form-item>
             <!--验证码-->
-            <el-form-item :label="$t('auth.captcha')">
+            <el-form-item :label="$t('auth.verify-code')" prop="captcha">
               <div class="captcha-container">
-                <el-input v-model="loginForm.captcha" :placeholder="$t('auth.placeholder.captcha')" style="width: 60%"></el-input>
+                <el-input v-model="passLoginForm.captcha" :placeholder="$t('auth.placeholder.verify-code')" style="width: 60%" prop="verifyCode"></el-input>
                 <img :src="captchaImage" @click="refreshCaptcha" class="captcha-image" alt="Verifying code"/>
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" class="login-btn" @click="handelLogin">{{ $t('auth.btn.login') }}</el-button>
+              <el-button type="primary" class="login-btn" @click="submitForm(passAuthForm)">{{ $t('auth.btn.login') }}</el-button>
             </el-form-item>
             <div class="password-addition">
               <a href="" class="forget-password">{{ $t('auth.forget-password') }}</a>
@@ -142,22 +204,27 @@ onBeforeUnmount(() => {
           </el-form>
         </el-tab-pane>
         <!--快捷登录-->
-        <el-tab-pane :label="$t('auth.tabs.email-phone')">
-          <el-form label-width="auto" :model="loginForm" class="auth-form">
-            <el-form-item :label="$t('auth.email') + '/' + $t('auth.phone-number')">
+        <el-tab-pane :label="$t('auth.tabs.email-phone')" name="fast-auth">
+          <el-form
+              ref = 'fastAuthForm'
+              label-width="auto"
+              :model="fastLoginForm"
+              :rules="fastAuthRules"
+              class="auth-form"
+          >
+            <el-form-item :label="$t('auth.email') + '/' + $t('auth.phone')" prop="username">
               <el-input
-                  v-model="loginForm.username"
+                  ref='usernameInputRef'
+                  v-model="fastLoginForm.username"
                   :placeholder="$t('auth.placeholder.email-phone')"
                   class="login-input"
               ></el-input>
             </el-form-item>
-            <el-form-item :label="$t('auth.captcha')">
+            <el-form-item :label="$t('auth.verify-code')" prop="verifyCode">
               <el-input
-                  v-model="loginForm.password"
-                  type="password"
-                  :placeholder="$t('auth.placeholder.captcha')"
+                  v-model="fastLoginForm.verifyCode"
+                  :placeholder="$t('auth.placeholder.verify-code')"
                   class="login-input"
-                  show-password
               >
                 <template #append>
                   <VerifyingCodeButton></VerifyingCodeButton>
@@ -165,7 +232,7 @@ onBeforeUnmount(() => {
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" class="login-btn" @click="handelLogin">{{ $t('auth.btn.login') }}</el-button>
+              <el-button type="primary" class="login-btn" @click="submitForm(fastAuthForm)">{{ $t('auth.btn.login') }}</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>

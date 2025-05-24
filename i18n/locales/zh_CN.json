@@ -37,20 +37,31 @@
       "password": "密码登录",
       "email-phone": "快捷登录"
     },
+    "count-down": "重新发送({countDown})",
     "third-party-login": "第三方登录  ",
     "register": "没有账号？立即注册",
     "username": "用户名",
-    "phone-number": "手机号",
+    "phone": "手机号",
     "email": "邮箱",
     "password": "密码",
     "keep-sign-in": "保持登录状态",
     "forget-password": "忘记密码",
-    "captcha": "验证码",
+    "verify-code": "验证码",
     "placeholder": {
       "username": "请输入用户名",
       "password": "请输入密码",
       "email-phone": "请输入注册手机号/邮箱",
-      "captcha": "请输入验证码"
+      "verify-code": "请输入验证码",
+      "phone": "请输入注册用的手机号"
+    },
+    "validate": {
+      "username-empty": "登录名不能为空",
+      "password-empty": "密码不能为空",
+      "verify-code-empty": "验证码不能为空",
+      "username-out-of-length": "用户名长度超出限制(4-20字符)",
+      "invalid-username": "用户名格式有误",
+      "invalid-phone": "手机号有误",
+      "invalid-email": "邮箱格式有误"
     }
   },
   "message": {
@@ -60,11 +71,16 @@
       "forbidden": "请求被拒绝",
       "bad-request": {
         "username-or-password-incorrect": "登录名或者密码错误",
-        "captcha-incorrect": "验证码错误!",
-        "captcha-expired": "验证码过期，请刷新重试",
+        "verify-code-incorrect": "验证码错误!",
+        "verify-code-expired": "验证码过期，请刷新重试",
+        "captcha-incorrect": "图形验证码错误!",
+        "captcha-expired": "图形验证码过期，请刷新重试",
+        "sms-code-incorrect": "手机验证码错误!",
+        "sms-code-expired": "手机验证码已过期，请重新获取",
+        "email-code-incorrect": "邮箱验证码错误!",
+        "email-code-expired": "邮箱验证码已过期，请重新获取",
         "username-empty": "登录名不能为空!",
-        "password-empty": "密码不能为空!",
-        "captcha-empty": "请输入验证码"
+        "password-empty": "密码不能为空!"
       }
     },
     "success": {

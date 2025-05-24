@@ -9,7 +9,9 @@
         <img src="@/assets/logo.png" alt="" width="40px" height="40px">
         <span style="margin-left: 1em">WaterFun</span>
       </div>
-      <slot></slot>
+      <div class="slot-container">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +37,14 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+.slot-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .logo{
   display: flex;
   align-items: center;

@@ -1,7 +1,7 @@
 import type {LoginType} from "~/types/LoginRequest";
 
 export const REGEX = {
-    username: /^[0-9a-zA-Z_]{4,15}$/,
+    username: /^[0-9a-zA-Z_]+$/,
     phone: /^1[3-9]\d{11}$/,
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
 }
