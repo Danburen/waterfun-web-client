@@ -10,6 +10,7 @@ import type { LoginRequest , LoginType } from '@/types/LoginRequest'
 import { validateUsername , validatePassword , validateVerifyCode} from "~/utils/Validator";
 import type {ElInput} from "../../.nuxt/components";
 import {undefined} from "zod";
+import {ErrorMessage} from "vee-validate";
 
 definePageMeta({
   ssr: false,
@@ -56,15 +57,44 @@ const resetForm = (passAuthForm: FormInstance | undefined,fastAuthForm: FormInst
   fastAuthForm.resetFields();
 }
 
-const buildRequest= (loginTabType:LoginTabType):LoginRequest =>{
-  
+const buildRequest= ():LoginRequest =>{
+  if(loginTab.value === "password"){
+    return passLoginForm as LoginRequest;
+  }else{
+    return {
+      username: fastLoginForm.username,
+      loginType: fastLoginForm.loginType,
+      ...(fastLoginForm.loginType === 'sms'
+              ? { smsCode: fastLoginForm.verifyCode }
+              : { emailCode: fastLoginForm.verifyCode }
+      ),
+    }as LoginRequest;
+  }
 }
 
 const submitForm = (form: FormInstance | undefined) => {
   if(!form) return;
   form.validate(valid => {
     if(valid){
-
+      request.post("auth/login",buildRequest()).then(res=>{
+        console.log(res)
+        ElMessage({
+          message: i18n.t('message.success.login-success'),
+          type: "success"
+        })
+        router.push("home")
+      }).catch(err=>{
+        console.log(err.response)
+        ElMessage({
+          message: getErrorMessage(err.data.code),
+          type: "error"
+        })
+        switch (err.data.code) {
+          case 40004:
+          case 40006:
+          case 40007: refCaptcha();break;
+        }
+      })
     }else{
       console.log("error");
     }
@@ -83,46 +113,6 @@ watch(()=>fastLoginForm.username,deBounce((value:string)=>{
       }
     }
 },300))
-
-
-const handelLogin = ()=>{
-  request.post("auth/login",{
-    username:passLoginForm.username,
-    password:passLoginForm.password,
-
-  }as LoginRequest).then(res=>{
-    console.log(res)
-    ElMessage({
-      message: i18n.t('message.success.login-success'),
-      type: "success"
-    })
-    router.push("home")
-  }).catch(err=>{
-    console.log(err.response)
-    const t = (key:string) => i18n.t( 'message.error.bad-request.'+ key)
-    const errMessage = () => {
-      switch (err.data.code) {
-        case 40001: return t('username-empty');
-        case 40002: return t('password-empty');
-        case 40003: return t('username-or-password-incorrect');
-        case 40004: return t('captcha-empty');
-        case 40006: return t('captcha-expired');
-        case 40007: return t('captcha-incorrect');
-      }
-    }
-    ElMessage({
-      message: i18n.t('message.error.login-fail-error') + " : " + errMessage(),
-      type: "error"
-    })
-    console.log(err);
-    switch (err.data.code) {
-      case 40004:
-      case 40006:
-      case 40007: refCaptcha();break;
-    }
-  })
-}
-
 
 const refreshCaptcha = throttle(()=>refCaptcha(),1000)
 function refCaptcha(){

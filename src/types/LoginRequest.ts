@@ -22,7 +22,7 @@ interface SmsLoginRequest  extends BaseLoginRequest{
 
 interface EmailLoginRequest  extends BaseLoginRequest{
     loginType: 'email';
-    email: string;
+    emailCode: string;
     password?: never;
     captcha?: never;
     smsCode?: never;

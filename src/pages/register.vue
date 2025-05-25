@@ -48,7 +48,7 @@ const handleRegister = async () => {
         </template>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="login-btn" @click="handelLogin">{{ $t('auth.btn.login') }}</el-button>
+        <el-button type="primary" class="login-btn" @click="">{{ $t('auth.btn.register') }}</el-button>
       </el-form-item>
     </el-form>
   </auth-box>
