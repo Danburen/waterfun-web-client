@@ -1,1 +1,2 @@
-# WaterFun-Web-Client
+# WaterFun
+The Web Client for WaterFun
