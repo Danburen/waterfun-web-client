@@ -1,0 +1,37 @@
+// https://nuxt.com/docs/api/configuration/nuxt-config
+import {fileURLToPath} from "node:url";
+
+
+export default defineNuxtConfig({
+  compatibilityDate: '2024-11-01',
+  devtools: { enabled: true },
+  srcDir: 'src/', // resource
+  alias:{
+    '@': fileURLToPath(new URL('./src', import.meta.url)),
+    '~': fileURLToPath(new URL('./src', import.meta.url))
+  },
+  modules:['@nuxtjs/i18n',
+    ['@element-plus/nuxt',{importStyle: 'css', themes: ['dark']}],
+    '@pinia/nuxt'],
+  plugins: ['@/plugins/async-validator.client'],
+  i18n:{
+    strategy: 'no_prefix', // no prefix router
+    detectBrowserLanguage: {
+        useCookie: true,     // use cookie to store language
+        cookieKey: 'i18n_redirected'
+    },
+    locales: [
+        { code: 'en' , file: "en_US.json"},
+        { code: 'zh' , file: "zh_CN.json"},
+    ],
+    lazy: true,
+    langDir: 'locales',
+  },
+
+
+  // typescript: {
+  //   tsConfig: {
+  //     extends: './tsconfig.json'
+  //   }
+  // }
+})
