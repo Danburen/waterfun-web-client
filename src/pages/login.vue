@@ -26,6 +26,8 @@ const passAuthForm = ref<FormInstance>();
 const fastAuthForm = ref<FormInstance>();
 const loginTab = ref<LoginTabType>('password');
 
+const buttonLoad = ref(false)
+
 const passLoginForm = reactive({
   username:'',
   password:'',
@@ -77,6 +79,7 @@ const submitForm = (form: FormInstance | undefined) => {
   form.validate(valid => {
     if(valid){
       request.post("auth/login",buildRequest()).then(res=>{
+        buttonLoad.value = true;
         console.log(res)
         ElMessage({
           message: i18n.t('message.success.login-success'),
@@ -94,6 +97,8 @@ const submitForm = (form: FormInstance | undefined) => {
           case 40006:
           case 40007: refCaptcha();break;
         }
+      }).finally(()=>{
+        buttonLoad.value = false;
       })
     }else{
       console.log("error");
@@ -222,7 +227,12 @@ onBeforeUnmount(() => {
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" class="login-btn" @click="submitForm(fastAuthForm)">{{ $t('auth.btn.login') }}</el-button>
+              <el-button
+                  type="primary"
+                  class="login-btn"
+                  @click="submitForm(fastAuthForm)"
+                  :loading = "buttonLoad"
+              >{{ $t('auth.btn.login') }}</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
