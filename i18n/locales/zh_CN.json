@@ -36,12 +36,13 @@
       "collapse": "收起"
     },
     "tabs": {
-      "password": "密码登录",
+      "password": "账号登录",
       "email-phone": "快捷登录"
     },
     "count-down": "重新发送({countDown})",
     "third-party-login": "第三方登录  ",
-    "register": "没有账号？立即注册",
+    "to-register": "没有账号？立即注册",
+    "to-login": "前往登录",
     "supplementary-info": "补充信息",
     "username": "用户名",
     "phone": "手机号",
@@ -60,12 +61,17 @@
     },
     "validate": {
       "username-empty": "登录名不能为空",
+      "phone-empty": "手机号不能为空",
+      "email-empty": "邮箱不能为空",
       "password-empty": "密码不能为空",
       "verify-code-empty": "验证码不能为空",
       "username-out-of-length": "用户名长度超出限制(4-20字符)",
       "invalid-username": "用户名格式有误",
       "invalid-phone": "手机号有误",
-      "invalid-email": "邮箱格式有误"
+      "invalid-email": "邮箱格式有误",
+      "captcha-empty": "图形验证码不能为空",
+      "sms-code-empty": "手机验证码不能为空",
+      "email-code-empty": "邮箱验证码不能为空"
     }
   },
   "message": {
@@ -73,6 +79,7 @@
       "api-error": "接口异常",
       "login-fail-error": "登录失败",
       "forbidden": "请求被拒绝",
+      "unknown-error": "未知错误",
       "bad-request": {
         "username-or-password-incorrect": "登录名或者密码错误",
         "verify-code-incorrect": "验证码错误!",
@@ -89,10 +96,16 @@
     },
     "success": {
       "login-success": "登录成功"
+    },
+    "tooltip": {
+      "optional-field": "以下区域的内容是选填字段，可选填充或不填。"
+    },
+    "throttled": {
+      "click-too-fast": "点击的太快了哦，休息一下吧"
     }
   },
   "confirm":{
-    "already-read": "我已阅读",
+    "confirm-read-licences": "我已阅读悉知并同意",
     "user-agreement": "用户协议"
   },
   "reminder": {

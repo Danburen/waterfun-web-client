@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import request from "@/utils/axiosRequest";
+import request from "~/utils/requests/axiosRequest";
 const countDown = ref(0);
 let timer = null as NodeJS.Timeout | null;
 

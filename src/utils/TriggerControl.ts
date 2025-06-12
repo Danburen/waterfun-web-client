@@ -1,17 +1,18 @@
-
-
 /**
  * Throttle execution of a function
- * @param func function
- * @param delay  delay between two function execution
+ * @param func function to be throttled
+ * @param delay delay between two function execution
+ * @param onThrottled optional callback when function is throttled
  */
-export function throttle(func: Function,delay: number) {
+export function throttle(func: Function, delay: number, onThrottled?: Function) {
     let canRun = true;
     return (...args: any[]) => {
         if(canRun) {
             func.apply(func, args);
             canRun = false;
             setTimeout(()=> canRun = true, delay);
+        } else if (onThrottled) {
+            onThrottled.apply(onThrottled, args);
         }
     }
 }

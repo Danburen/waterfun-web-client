@@ -1,32 +1,34 @@
 <script setup lang="ts">
 import axios from "axios";
-import request from "@/utils/axiosRequest";
+import request from "~/utils/requests/axiosRequest";
 import {ref, reactive, onMounted, onBeforeMount, nextTick} from "vue";
 import {ElMessage, type FormInstance, type FormRules, type TabsPaneContext} from "element-plus";
 import { deBounce , throttle} from "@/utils/TriggerControl.js"
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import AuthBox from "~/components/auth/authBox.vue";
 import type { LoginRequest , LoginType } from '@/types/LoginRequest'
-import { validateUsername , validatePassword , validateVerifyCode} from "~/utils/Validator";
+import { validateAuthname , validatePassword , validateVerifyCode} from "~/utils/Validator";
 import type {ElInput} from "../../.nuxt/components";
+import { Loading } from "@element-plus/icons-vue"
 import {undefined} from "zod";
 import {ErrorMessage} from "vee-validate";
-
-definePageMeta({
-  ssr: false,
-})
+import {useApiFetch} from "~/utils/requests/useFetchRequest";
+import type {ErrorCode} from "~/types/ErrorCode";
 
 type LoginTabType = 'password'|'fast-auth';
 
 const i18n = useI18n();
 const router = useRouter();
 
-const captchaImage = ref('');
 const passAuthForm = ref<FormInstance>();
 const fastAuthForm = ref<FormInstance>();
 const loginTab = ref<LoginTabType>('password');
+const captchaLoading = ref(false);
 
 const buttonLoad = ref(false)
+
+const captchaImage = useState('captchaImage', () => '');
+
 
 const passLoginForm = reactive({
   username:'',
@@ -42,14 +44,14 @@ const fastLoginForm = reactive({
 })
 
 const passAuthRules = reactive<FormRules<typeof passLoginForm>>({
-  username:[{validator: validateUsername('password'),trigger: "blur" }],
-  password:[{validator: validatePassword,trigger: "blur"}],
-  captcha:[{validator: validateVerifyCode, trigger: "blur"}],
+  username:[{validator: validateAuthname('password'),trigger: "blur" }],
+  password:[{validator: validatePassword(false),trigger: "blur"}],
+  captcha:[{validator: validateVerifyCode(false), trigger: "blur"}],
 })
 
 const fastAuthRules = reactive<FormRules<typeof fastLoginForm>>({
-  username: [{validator: validateUsername('sms'),trigger: "blur" }],
-  verifyCode: [{validator: validateVerifyCode, trigger: "blur"}],
+  username: [{validator: validateAuthname('sms'),trigger: "blur" }],
+  verifyCode: [{validator: validateVerifyCode(false), trigger: "blur"}],
 })
 
 const resetForm = (passAuthForm: FormInstance | undefined,fastAuthForm: FormInstance | undefined) => {
@@ -74,20 +76,20 @@ const buildRequest= ():LoginRequest =>{
   }
 }
 
-const submitForm = (form: FormInstance | undefined) => {
+const submitForm = (form:FormInstance | undefined) => {
   if(!form) return;
-  form.validate(valid => {
+  form.validate((valid)=>{
+    buttonLoad.value = true;
     if(valid){
-      request.post("auth/login",buildRequest()).then(res=>{
-        buttonLoad.value = true;
-        console.log(res)
+      request.post('auth/login',buildRequest()).then(res=>{
+        console.log(res.data)
         ElMessage({
           message: i18n.t('message.success.login-success'),
           type: "success"
         })
-        router.push("home")
+        router.push('index');
       }).catch(err=>{
-        console.log(err.response)
+        console.log(err.data.message);
         ElMessage({
           message: getErrorMessage(err.data.code),
           type: "error"
@@ -95,58 +97,49 @@ const submitForm = (form: FormInstance | undefined) => {
         switch (err.data.code) {
           case 40004:
           case 40006:
-          case 40007: refCaptcha();break;
+          case 40007: refreshCaptcha();break;
         }
       }).finally(()=>{
         buttonLoad.value = false;
       })
     }else{
-      console.log("error");
+      console.error('error occurred when submit form');
     }
   })
 }
-
 
 watch(()=>fastLoginForm.username,deBounce((value:string)=>{
   if(loginTab.value === 'fast-auth'){
       if(value.includes('@')){
         fastLoginForm.loginType = 'email';
-        fastAuthRules.username = [{validator: validateUsername('email'),trigger: "blur" }];
+        fastAuthRules.username = [{validator: validateAuthname('email'),trigger: "blur" }];
       }else{
         fastLoginForm.loginType = 'sms';
-        fastAuthRules.username = [{validator: validateUsername('sms'),trigger: "blur" }];
+        fastAuthRules.username = [{validator: validateAuthname('sms'),trigger: "blur" }];
       }
     }
 },300))
 
-const refreshCaptcha = throttle(()=>refCaptcha(),1000)
-function refCaptcha(){
-  console.log("refCaptcha");
-  request.get('auth/captcha', {responseType:'arraybuffer'}).then((response) => {
-    const base64 = btoa(new Uint8Array(response.data).reduce(
-        (data,byte) => data + String.fromCharCode(byte),''
-    ));
-    captchaImage.value= 'data:image/jpeg;base64,' + base64;
-  }).catch((error) => {
-    ElMessage({
-      message: i18n.t('message.error.api-error'),
-      type: 'error'
+const refreshCaptcha = throttle(()=>{
+  if(! captchaLoading.value){ 
+    captchaLoading.value = true;
+    request.get('/auth/captcha',{responseType: 'arraybuffer',meta:{ needsCSRF: false }}).then(res=>{
+      const base64 = convertArrayBufferToBase64(res.data);
+      captchaImage.value = `data:image/jpeg;base64,${base64}`;
+    }).catch(err=>{
+      ElMessage.error(i18n.t('message.error.api-error'));
+      console.log(err);
+    }).finally(()=>{
+      captchaLoading.value = false;
     })
-    console.error(error)
-  })
-}
-
-onBeforeMount(()=>{
-    refreshCaptcha()
+  }
+},1000,()=>{
+  ElMessage.error(i18n.t('message.throttled.click-too-fast'));
 })
 
-onMounted(() => {
-
-})
-
-onBeforeUnmount(() => {
-
-})
+onBeforeMount(() => {
+  refreshCaptcha();
+});
 </script>
 
 <template>
@@ -156,6 +149,7 @@ onBeforeUnmount(() => {
           :stretch="true"
           v-model="loginTab"
           @tab-click="resetForm(passAuthForm,fastAuthForm)"
+          class="login-tab"
       >
         <!--密码登录-->
         <el-tab-pane :label="$t('auth.tabs.password')" name="password">
@@ -186,16 +180,17 @@ onBeforeUnmount(() => {
             <el-form-item :label="$t('auth.verify-code')" prop="captcha">
               <div class="captcha-container">
                 <el-input v-model="passLoginForm.captcha" :placeholder="$t('auth.placeholder.verify-code')" style="width: 60%" prop="verifyCode"></el-input>
-                <img :src="captchaImage" @click="refreshCaptcha" class="captcha-image" alt="Verifying code"/>
+                  <el-image v-loading="captchaLoading" v-if="captchaImage" :src="captchaImage" @click="()=>{ refreshCaptcha();}" class="captcha-image" alt="Captcha"/>
+                  <el-skeleton v-else :rows="1" animated style="width: 120px; height: 20px" />
               </div>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" class="login-btn" @click="submitForm(passAuthForm)">{{ $t('auth.btn.login') }}</el-button>
+              <div class="password-addition">
+                <el-button size="small" link>{{ $t('auth.forget-password') }}</el-button>
+                <el-button size="small" link class="to-register" @click.prevent="router.push('/register')" >{{ $t('auth.to-register') }}</el-button>
+              </div>
             </el-form-item>
-            <div class="password-addition">
-              <a href="" class="forget-password">{{ $t('auth.forget-password') }}</a>
-              <a href="" class="register" @click.prevent="router.push('/register')" >{{ $t('auth.register') }}</a>
-            </div>
           </el-form>
         </el-tab-pane>
         <!--快捷登录-->
@@ -232,22 +227,12 @@ onBeforeUnmount(() => {
                   class="login-btn"
                   @click="submitForm(fastAuthForm)"
                   :loading = "buttonLoad"
-              >{{ $t('auth.btn.login') }}</el-button>
+              >{{ $t('auth.btn.login') }} / {{$t('auth.btn.register')}}</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
       </el-tabs>
-      <!--      <div class="third-party-login-box">-->
-      <!--        {{$t('auth.third-party-login')}}-->
-      <!--      </div>-->
     </auth-box>
-<!--    <div class="auth-box">-->
-<!--      <div class="logo">-->
-<!--        <img src="@/assets/logo.png" alt="" width="40px" height="40px">-->
-<!--        <span style="margin-left: 1em">WaterFun</span>-->
-<!--      </div>-->
-
-<!--    </div>-->
 </template>
 
 <style scoped>
@@ -260,9 +245,10 @@ onBeforeUnmount(() => {
 .password-addition{
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
-.password-addition .register{
+.password-addition .to-register{
   margin-left: auto;
 }
 
@@ -274,5 +260,9 @@ onBeforeUnmount(() => {
 .captcha-container {
   display: flex;
   align-items: center;
+  width: 100%;
+}
+:deep(.el-tabs__content) {
+  padding-bottom: 0;
 }
 </style>

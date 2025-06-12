@@ -6,7 +6,7 @@ import {translate} from "~/utils/utils";
 
 const keyPrefix = 'auth.validate.'
 
-export const validateUsername = (loginType: LoginType) =>{
+export const validateAuthname = (loginType: LoginType) =>{
     return(rule:any,value:any,callback:any)=>{
         if(value === ''){
             callback(new Error(translate(keyPrefix + 'username-empty')));
@@ -33,9 +33,46 @@ export const validateUsername = (loginType: LoginType) =>{
     }
 }
 
-export const createFieldEmptyValidator = (fieldName:string) => {
+export const validateUsername = (allowEmpty?:boolean) =>{
     return(rule:any,value:any,callback:any)=>{
-        if(!value){
+        if(!value && !allowEmpty){
+            callback(new Error(translate(keyPrefix + 'username-empty')));
+            return;
+        }
+        if(allowEmpty){
+            callback();
+            return;
+        }
+        if(value.length < 4 || value.length > 20){
+            callback(new Error(translate(keyPrefix + 'username-out-of-length')));
+        }
+        if(! REGEX.username.test(value)){
+            callback(new Error(translate(keyPrefix + 'invalid-username')));
+        }
+    }
+}
+
+export const validateEmail = (allowEmpty?:boolean) =>{
+    return createFieldValidator({
+        regex: REGEX.email,
+        emptyErrorKey: 'email-empty',
+        invalidErrorKey: 'invalid-email',
+        allowEmpty: allowEmpty,
+    })
+}
+
+export const validatePhoneNumber = (allowEmpty?:boolean) =>{
+    return createFieldValidator({
+        regex: REGEX.phone,
+        emptyErrorKey: 'phone-empty',
+        invalidErrorKey: 'invalid-phone',
+        allowEmpty: allowEmpty,
+    })
+}
+
+export const createFieldEmptyValidator = (fieldName:string,allowEmpty:boolean) => {
+    return(rule:any,value:any,callback:any)=>{
+        if(!value && !allowEmpty){
             callback(new Error(translate(`${keyPrefix}${fieldName}-empty`)));
         }else{
             callback();
@@ -43,6 +80,40 @@ export const createFieldEmptyValidator = (fieldName:string) => {
     }
 }
 
-export const validateVerifyCode =  createFieldEmptyValidator('verify-code')
+export const createFieldValidator = (
+    options: {
+        regex?: RegExp,
+        emptyErrorKey: string,
+        invalidErrorKey?: string,
+        allowEmpty?: boolean,
+        preCheck?: (value: string) => boolean
+    }
+) => {
+    return (_: any, value: any, callback: any) => {
+        if (!value && !options.allowEmpty) {
+            callback(new Error(translate(keyPrefix + options.emptyErrorKey)));
+            return;
+        }
 
-export const validatePassword = createFieldEmptyValidator('password')
+        if (options.allowEmpty && !value) {
+            callback();
+            return;
+        }
+
+        if (options.preCheck && !options.preCheck(value)) {
+            callback(new Error(translate('custom-precheck-error')));
+            return;
+        }
+
+        if (options.regex && options.invalidErrorKey &&!options.regex.test(value)) {
+            callback(new Error(translate(keyPrefix + options.invalidErrorKey)));
+            return;
+        }
+
+        callback();
+    };
+};
+
+export const validateVerifyCode = (allowEmpty:boolean)=> createFieldEmptyValidator('verify-code',allowEmpty);
+
+export const validatePassword =(allowEmpty:boolean)=> createFieldEmptyValidator('password',allowEmpty);

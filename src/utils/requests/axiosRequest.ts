@@ -1,5 +1,12 @@
 import axios from 'axios'
-
+declare module 'axios' {
+    interface AxiosRequestConfig {
+        meta?: {
+            needsCSRF?: boolean;
+        };
+    }
+}
+const CSRF_SKIP_LIST: string[] = import.meta.env.VITE_CSRF_SKIP_LIST?.split(',') || [];
 const service = axios.create({
     baseURL: import.meta.env.VITE_API_BASE,
     timeout: 5000,
@@ -14,13 +21,23 @@ service.interceptors.request.use(
         //     config.headers.Authorization = `Bearer ${token}`;
         // }
 
-        if(config.method !== 'GET') {
+        const isSkip = CSRF_SKIP_LIST.some((path: string) => config.url?.includes(path));
+        const needsCSRF = config.meta?.needsCSRF !== false && !isSkip;
+        if(config.method !== 'GET' && needsCSRF) {
             const  CSRFToken = getCsrfToken()
             if(CSRFToken) {
                 config.headers['X-XSRF-TOKEN'] = CSRFToken;
                 console.log(config);
             }else {
                 console.warn('CSRF Token not found in cookies!');
+            }
+        }
+
+        if(config.method == 'GET') {
+            config.params =  {
+                _t: Date.now(),
+                _n: Math.random().toString(36).slice(2),
+                ...config.params
             }
         }
         return config;
@@ -75,13 +92,6 @@ service.interceptors.response.use(
         }
     }
 )
-
-function generateRequestParams(){
-    return {
-        timestamp: Date.now(),
-        nonce: Math.random().toString(36).substr(2, 10)
-    }
-}
 
 // get CSRF Token From cookie
 function getCsrfToken() {

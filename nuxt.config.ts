@@ -6,6 +6,16 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   srcDir: 'src/', // resource
+  runtimeConfig:{
+    public: {
+      apiBase: process.env.NUXT_PUBLIC_API_BASE
+    }
+  },
+  nitro: {
+    routeRules: {
+      '/auth/**': { proxy: process.env.NUXT_PUBLIC_API_BASE + "/auth/" }
+    }
+  },
   alias:{
     '@': fileURLToPath(new URL('./src', import.meta.url)),
     '~': fileURLToPath(new URL('./src', import.meta.url))

@@ -10,6 +10,10 @@ export enum ErrorCode {
     SMS_CODE_INCORRECT = 40009,
     EMAIL_CODE_EXPIRED = 40010,
     EMAIL_CODE_INCORRECT = 40011,
+    CAPTCHA_EMPTY = 40012,
+    SMS_CODE_EMPTY = 40013,
+    EMAIL_CODE_EMPTY = 40014,
+    UNKNOWN_ERROR = 50000,
 }
 
 export type ErrorMessageKey =
@@ -18,6 +22,8 @@ export type ErrorMessageKey =
     | 'verify-code-expired' | 'verify-code-incorrect'
     | 'sms-code-expired' | 'sms-code-incorrect'
     | 'email-code-expired' | 'email-incorrect'
+    | 'captcha-empty' | 'sms-code-empty' | 'email-code-empty'
+    | 'unknown-error'
 
 export const ERROR_CODE_MESSAGE_KEY_MAP:Record<string, ErrorMessageKey> = {
     [ErrorCode.USERNAME_EMPTY]: 'username-empty',
@@ -31,4 +37,7 @@ export const ERROR_CODE_MESSAGE_KEY_MAP:Record<string, ErrorMessageKey> = {
     [ErrorCode.SMS_CODE_INCORRECT]: 'sms-code-incorrect',
     [ErrorCode.EMAIL_CODE_EXPIRED]: 'email-code-expired',
     [ErrorCode.EMAIL_CODE_INCORRECT]: 'email-incorrect',
+    [ErrorCode.CAPTCHA_EMPTY]: 'captcha-empty',
+    [ErrorCode.SMS_CODE_EMPTY]: 'sms-code-empty',
+    [ErrorCode.EMAIL_CODE_EMPTY]: 'email-code-empty',
 }

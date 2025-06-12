@@ -4,6 +4,17 @@ interface BaseLoginRequest{
     loginType: LoginType,
 }
 
+interface BasicRegisterRequest{
+    phone: number,
+    username: string,
+    smsCode: string,
+}
+
+interface FullRegisterRequest extends BasicRegisterRequest{
+    email?: string,
+    password?: string,
+}
+
 interface PasswordLoginRequest extends BaseLoginRequest{
     loginType: 'password';
     password: string;
@@ -30,3 +41,4 @@ interface EmailLoginRequest  extends BaseLoginRequest{
 
 export type LoginType = 'password'|'email'|'sms'
 export type LoginRequest = PasswordLoginRequest | EmailLoginRequest | SmsLoginRequest;
+export type RegisterRequest = BasicRegisterRequest | FullRegisterRequest;

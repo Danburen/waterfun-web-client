@@ -3,20 +3,36 @@
 </script>
 
 <template>
-  <div class="auth-container">
-    <div class="auth-box">
+  <div class="container">
+    <el-card class="auth-box" shadow="always">
       <div class="logo">
-        <img src="@/assets/logo.png" alt="" width="40px" height="40px">
+        <img src="@/assets/logo.png" width="40px" height="40px" alt="WaterFun">
         <span style="margin-left: 1em">WaterFun</span>
       </div>
       <div class="slot-container">
         <slot></slot>
       </div>
-    </div>
+    </el-card>
   </div>
 </template>
 
 <style scoped>
+
+/*container style*/
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+:deep(.el-card) {
+
+}
+/*@Departed*/
 .auth-container {
   display: flex;
   position: absolute;
@@ -32,10 +48,7 @@
 
 .auth-box {
   width: 400px;
-  padding: 20px;
-  background: #fff;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .slot-container {
