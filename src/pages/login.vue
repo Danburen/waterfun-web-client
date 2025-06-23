@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import axios from "axios";
 import request from "~/utils/requests/axiosRequest";
-import {ref, reactive, onMounted, onBeforeMount, nextTick} from "vue";
-import {ElMessage, type FormInstance, type FormRules, type TabsPaneContext} from "element-plus";
-import { deBounce , throttle} from "@/utils/TriggerControl.js"
+import {onBeforeMount, reactive, ref} from "vue";
+import {ElMessage, type FormInstance, type FormRules} from "element-plus";
+import {deBounce, throttle} from "@/utils/TriggerControl.js"
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import AuthBox from "~/components/auth/authBox.vue";
-import type { LoginRequest , LoginType } from '@/types/LoginRequest'
-import { validateAuthname , validatePassword , validateVerifyCode} from "~/utils/Validator";
+import type {LoginRequest, LoginType} from '@/types/LoginRequest'
+import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/Validator";
 import type {ElInput} from "../../.nuxt/components";
-import { Loading } from "@element-plus/icons-vue"
 import {undefined} from "zod";
-import {ErrorMessage} from "vee-validate";
-import {useApiFetch} from "~/utils/requests/useFetchRequest";
-import type {ErrorCode} from "~/types/ErrorCode";
 
 type LoginTabType = 'password'|'fast-auth';
 
@@ -84,7 +79,7 @@ const submitForm = (form:FormInstance | undefined) => {
       request.post('auth/login',buildRequest()).then(res=>{
         console.log(res.data)
         ElMessage({
-          message: i18n.t('message.success.login-success'),
+          message: i18n.t('message.success.loginSuccess'),
           type: "success"
         })
         router.push('index');
@@ -127,14 +122,14 @@ const refreshCaptcha = throttle(()=>{
       const base64 = convertArrayBufferToBase64(res.data);
       captchaImage.value = `data:image/jpeg;base64,${base64}`;
     }).catch(err=>{
-      ElMessage.error(i18n.t('message.error.api-error'));
+      ElMessage.error(i18n.t('message.error.apiError'));
       console.log(err);
     }).finally(()=>{
       captchaLoading.value = false;
     })
   }
 },1000,()=>{
-  ElMessage.error(i18n.t('message.throttled.click-too-fast'));
+  ElMessage.error(i18n.t('message.throttled.clickTooFast'));
 })
 
 onBeforeMount(() => {
@@ -177,9 +172,9 @@ onBeforeMount(() => {
               ></el-input>
             </el-form-item>
             <!--验证码-->
-            <el-form-item :label="$t('auth.verify-code')" prop="captcha">
+            <el-form-item :label="$t('auth.verifyCode')" prop="captcha">
               <div class="captcha-container">
-                <el-input v-model="passLoginForm.captcha" :placeholder="$t('auth.placeholder.verify-code')" style="width: 60%" prop="verifyCode"></el-input>
+                <el-input v-model="passLoginForm.captcha" :placeholder="$t('auth.placeholder.verifyCode')" style="width: 60%" prop="verifyCode"></el-input>
                   <el-image v-loading="captchaLoading" v-if="captchaImage" :src="captchaImage" @click="()=>{ refreshCaptcha();}" class="captcha-image" alt="Captcha"/>
                   <el-skeleton v-else :rows="1" animated style="width: 120px; height: 20px" />
               </div>
@@ -187,14 +182,14 @@ onBeforeMount(() => {
             <el-form-item>
               <el-button type="primary" class="login-btn" @click="submitForm(passAuthForm)">{{ $t('auth.btn.login') }}</el-button>
               <div class="password-addition">
-                <el-button size="small" link>{{ $t('auth.forget-password') }}</el-button>
-                <el-button size="small" link class="to-register" @click.prevent="router.push('/register')" >{{ $t('auth.to-register') }}</el-button>
+                <el-button size="small" link>{{ $t('auth.forgetPassword') }}</el-button>
+                <el-button size="small" link class="to-register" @click.prevent="router.push('/register')" >{{ $t('auth.toRegister') }}</el-button>
               </div>
             </el-form-item>
           </el-form>
         </el-tab-pane>
         <!--快捷登录-->
-        <el-tab-pane :label="$t('auth.tabs.email-phone')" name="fast-auth">
+        <el-tab-pane :label="$t('auth.tabs.emailPhone')" name="fast-auth">
           <el-form
               ref = 'fastAuthForm'
               label-width="auto"
@@ -206,18 +201,18 @@ onBeforeMount(() => {
               <el-input
                   ref='usernameInputRef'
                   v-model="fastLoginForm.username"
-                  :placeholder="$t('auth.placeholder.email-phone')"
+                  :placeholder="$t('auth.placeholder.emailPhone')"
                   class="login-input"
               ></el-input>
             </el-form-item>
-            <el-form-item :label="$t('auth.verify-code')" prop="verifyCode">
+            <el-form-item :label="$t('auth.verifyCode')" prop="verifyCode">
               <el-input
                   v-model="fastLoginForm.verifyCode"
-                  :placeholder="$t('auth.placeholder.verify-code')"
+                  :placeholder="$t('auth.placeholder.verifyCode')"
                   class="login-input"
               >
                 <template #append>
-                  <VerifyingCodeButton></VerifyingCodeButton>
+                  <VerifyingCodeButton :username="fastLoginForm.username" :getType="fastLoginForm.username.includes('@') ? 'email_code' : 'sms_code'" :codePurpose="'login'"></VerifyingCodeButton>
                 </template>
               </el-input>
             </el-form-item>

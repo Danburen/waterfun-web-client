@@ -1,4 +1,4 @@
-import type { UseFetchOptions } from "nuxt/app";
+import type {UseFetchOptions} from "nuxt/app";
 import defu from "defu";
 
 export const useApiFetch = <T>(

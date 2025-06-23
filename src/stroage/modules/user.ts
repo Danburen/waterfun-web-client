@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import type {User} from "~/types/User";
-import type {PersistenceOptions} from "pinia-plugin-persistedstate";
 import {useCookie} from "nuxt/app";
+
 export const useUserStore = defineStore('userStore',{
     state: () =>{
         return {

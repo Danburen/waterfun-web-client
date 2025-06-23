@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {InfoFilled} from '@element-plus/icons-vue'
-import {ElMessage, type FormInstance, type FormRules} from "element-plus";
+import {type FormInstance, type FormRules} from "element-plus";
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import type {ElInput} from "../../.nuxt/components";
 import {validateEmail, validatePassword, validatePhoneNumber} from "../../.nuxt/imports";
@@ -53,20 +53,20 @@ const handleRegister = () => {
       <el-form-item :label="$t('auth.phone')" prop="phone">
         <el-input :placeholder="$t('auth.placeholder.phone')" v-model="registerForm.phone"></el-input>
       </el-form-item>
-      <el-form-item :label="$t('auth.verify-code')" prop="smsCode">
+      <el-form-item :label="$t('auth.verifyCode')" prop="smsCode">
         <el-input
             v-model="registerForm.smsCode"
-            :placeholder="$t('auth.placeholder.verify-code')"
+            :placeholder="$t('auth.placeholder.verifyCode')"
             class="login-input">
           <template #append>
-            <VerifyingCodeButton></VerifyingCodeButton>
+            <VerifyingCodeButton :getType="registerForm.phone ? 'sms_code' : 'email_code'" :codePurpose="'register'"></VerifyingCodeButton>
           </template>
         </el-input>
       </el-form-item>
       <!-- 补充信息 -->
       <el-form-item class="supplementary-info-container">
-        <el-text tag="b">{{ $t('auth.supplementary-info') }}</el-text>
-        <el-tooltip :content="$t('message.tooltip.optional-field')" placement="right"><el-link underline="never" :icon="InfoFilled"></el-link></el-tooltip>
+        <el-text tag="b">{{ $t('auth.supplementaryInfo') }}</el-text>
+        <el-tooltip :content="$t('message.tooltip.optionalField')" placement="right"><el-link underline="never" :icon="InfoFilled"></el-link></el-tooltip>
         <el-link underline="never" href="" @click.prevent="expandShow = !expandShow" class="expand-btn">
             {{ expandShow ? $t('auth.btn.collapse') : $t('auth.btn.expand') }}</el-link>
       </el-form-item>
@@ -92,10 +92,10 @@ const handleRegister = () => {
         <el-button type="primary" class="login-btn" @click="">{{ $t('auth.btn.register') }}</el-button>
         <div class="addition-container">
           <el-checkbox size="small" v-model="licenceCheck">
-            {{ $t('confirm.confirm-read-licences')  + ' ' }}
-            <a href="/" >{{ $t('confirm.user-agreement') }}</a>
+            {{ $t('confirm.confirmReadLicences')  + ' ' }}
+            <a href="/" >{{ $t('confirm.userAgreement') }}</a>
           </el-checkbox>
-          <el-button  size="small" link class="to-login" @click.prevent="router.push('/login')">{{ $t('auth.to-login') }}</el-button>
+          <el-button  size="small" link class="to-login" @click.prevent="router.push('/login')">{{ $t('auth.toLogin') }}</el-button>
         </div>
 
       </el-form-item>

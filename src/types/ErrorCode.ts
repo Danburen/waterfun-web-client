@@ -17,27 +17,27 @@ export enum ErrorCode {
 }
 
 export type ErrorMessageKey =
-    | 'username-empty' | 'password-empty' | 'username-or-password-incorrect'
-    | 'captcha-expired' | 'captcha-incorrect'
-    | 'verify-code-expired' | 'verify-code-incorrect'
-    | 'sms-code-expired' | 'sms-code-incorrect'
-    | 'email-code-expired' | 'email-incorrect'
-    | 'captcha-empty' | 'sms-code-empty' | 'email-code-empty'
-    | 'unknown-error'
+    | 'usernameEmpty' | 'passwordEmpty' | 'usernameOrPasswordIncorrect'
+    | 'captchaExpired' | 'captchaIncorrect'
+    | 'verifyCodeExpired' | 'verifyCodeIncorrect'
+    | 'smsCodeExpired' | 'smsCodeIncorrect'
+    | 'emailCodeExpired' | 'emailIncorrect'
+    | 'captchaEmpty' | 'smsCodeEmpty' | 'emailCodeEmpty'
+    | 'unknownError'
 
 export const ERROR_CODE_MESSAGE_KEY_MAP:Record<string, ErrorMessageKey> = {
-    [ErrorCode.USERNAME_EMPTY]: 'username-empty',
-    [ErrorCode.PASSWORD_EMPTY]: 'password-empty',
-    [ErrorCode.USERNAME_OR_PASSWORD_INCORRECT]: 'username-or-password-incorrect',
-    [ErrorCode.CAPTCHA_EXPIRED]: 'captcha-expired',
-    [ErrorCode.CAPTCHA_INCORRECT]: 'captcha-incorrect',
-    [ErrorCode.VERIFY_CODE_EXPIRED]: 'verify-code-expired',
-    [ErrorCode.VERIFY_CODE_INCORRECT]: 'verify-code-incorrect',
-    [ErrorCode.SMS_CODE_EXPIRED]: 'sms-code-expired',
-    [ErrorCode.SMS_CODE_INCORRECT]: 'sms-code-incorrect',
-    [ErrorCode.EMAIL_CODE_EXPIRED]: 'email-code-expired',
-    [ErrorCode.EMAIL_CODE_INCORRECT]: 'email-incorrect',
-    [ErrorCode.CAPTCHA_EMPTY]: 'captcha-empty',
-    [ErrorCode.SMS_CODE_EMPTY]: 'sms-code-empty',
-    [ErrorCode.EMAIL_CODE_EMPTY]: 'email-code-empty',
+    [ErrorCode.USERNAME_EMPTY]: 'usernameEmpty',
+    [ErrorCode.PASSWORD_EMPTY]: 'passwordEmpty',
+    [ErrorCode.USERNAME_OR_PASSWORD_INCORRECT]: 'usernameOrPasswordIncorrect',
+    [ErrorCode.CAPTCHA_EXPIRED]: 'captchaExpired',
+    [ErrorCode.CAPTCHA_INCORRECT]: 'captchaIncorrect',
+    [ErrorCode.VERIFY_CODE_EXPIRED]: 'verifyCodeExpired',
+    [ErrorCode.VERIFY_CODE_INCORRECT]: 'verifyCodeIncorrect',
+    [ErrorCode.SMS_CODE_EXPIRED]: 'smsCodeExpired',
+    [ErrorCode.SMS_CODE_INCORRECT]: 'smsCodeIncorrect',
+    [ErrorCode.EMAIL_CODE_EXPIRED]: 'emailCodeExpired',
+    [ErrorCode.EMAIL_CODE_INCORRECT]: 'emailIncorrect',
+    [ErrorCode.CAPTCHA_EMPTY]: 'captchaEmpty',
+    [ErrorCode.SMS_CODE_EMPTY]: 'smsCodeEmpty',
+    [ErrorCode.EMAIL_CODE_EMPTY]: 'emailCodeEmpty',
 }

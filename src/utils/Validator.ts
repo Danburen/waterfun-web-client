@@ -1,7 +1,5 @@
-import type {FormRules} from "element-plus";
-import type { LoginType } from "~/types/LoginRequest";
+import type {LoginType} from "~/types/LoginRequest";
 import {REGEX} from "~/utils/Regex";
-import type {Composer} from "vue-i18n";
 import {translate} from "~/utils/utils";
 
 const keyPrefix = 'auth.validate.'
@@ -9,23 +7,23 @@ const keyPrefix = 'auth.validate.'
 export const validateAuthname = (loginType: LoginType) =>{
     return(rule:any,value:any,callback:any)=>{
         if(value === ''){
-            callback(new Error(translate(keyPrefix + 'username-empty')));
+            callback(new Error(translate(keyPrefix + 'usernameEmpty')));
             return;
         }
         switch(loginType){
             case 'email':
                 if(! REGEX.email.test(value)){
-                    callback(new Error(translate(keyPrefix + 'invalid-email')));
+                    callback(new Error(translate(keyPrefix + 'invalidEmail')));
                 }break;
             case 'sms':
                 if(! REGEX.phone.test(value)){
-                    callback(new Error(translate(keyPrefix + 'invalid-phone')));
+                    callback(new Error(translate(keyPrefix + 'invalidPhone')));
                 }break;
             case 'password':
                 if(value.length < 4 || value.length > 20){
-                    callback(new Error(translate(keyPrefix + 'username-out-of-length')));
+                    callback(new Error(translate(keyPrefix + 'usernameOutOfLength')));
                 }else if(! REGEX.username.test(value)){
-                    callback(new Error(translate(keyPrefix + 'invalid-username')));
+                    callback(new Error(translate(keyPrefix + 'invalidUsername')));
                 }break;
             default: callback();
         }
@@ -36,7 +34,7 @@ export const validateAuthname = (loginType: LoginType) =>{
 export const validateUsername = (allowEmpty?:boolean) =>{
     return(rule:any,value:any,callback:any)=>{
         if(!value && !allowEmpty){
-            callback(new Error(translate(keyPrefix + 'username-empty')));
+            callback(new Error(translate(keyPrefix + 'usernameEmpty')));
             return;
         }
         if(allowEmpty){
@@ -44,10 +42,10 @@ export const validateUsername = (allowEmpty?:boolean) =>{
             return;
         }
         if(value.length < 4 || value.length > 20){
-            callback(new Error(translate(keyPrefix + 'username-out-of-length')));
+            callback(new Error(translate(keyPrefix + 'usernameOutOfLength')));
         }
         if(! REGEX.username.test(value)){
-            callback(new Error(translate(keyPrefix + 'invalid-username')));
+            callback(new Error(translate(keyPrefix + 'invalidUsername')));
         }
     }
 }
@@ -55,8 +53,8 @@ export const validateUsername = (allowEmpty?:boolean) =>{
 export const validateEmail = (allowEmpty?:boolean) =>{
     return createFieldValidator({
         regex: REGEX.email,
-        emptyErrorKey: 'email-empty',
-        invalidErrorKey: 'invalid-email',
+        emptyErrorKey: 'emailEmpty',
+        invalidErrorKey: 'invalidEmail',
         allowEmpty: allowEmpty,
     })
 }
@@ -64,8 +62,8 @@ export const validateEmail = (allowEmpty?:boolean) =>{
 export const validatePhoneNumber = (allowEmpty?:boolean) =>{
     return createFieldValidator({
         regex: REGEX.phone,
-        emptyErrorKey: 'phone-empty',
-        invalidErrorKey: 'invalid-phone',
+        emptyErrorKey: 'phoneEmpty',
+        invalidErrorKey: 'invalidPhone',
         allowEmpty: allowEmpty,
     })
 }
@@ -73,7 +71,7 @@ export const validatePhoneNumber = (allowEmpty?:boolean) =>{
 export const createFieldEmptyValidator = (fieldName:string,allowEmpty:boolean) => {
     return(rule:any,value:any,callback:any)=>{
         if(!value && !allowEmpty){
-            callback(new Error(translate(`${keyPrefix}${fieldName}-empty`)));
+            callback(new Error(translate(`${keyPrefix}${fieldName}Empty`)));
         }else{
             callback();
         }
@@ -101,7 +99,7 @@ export const createFieldValidator = (
         }
 
         if (options.preCheck && !options.preCheck(value)) {
-            callback(new Error(translate('custom-precheck-error')));
+            callback(new Error(translate('customPrecheckError')));
             return;
         }
 
@@ -114,6 +112,6 @@ export const createFieldValidator = (
     };
 };
 
-export const validateVerifyCode = (allowEmpty:boolean)=> createFieldEmptyValidator('verify-code',allowEmpty);
+export const validateVerifyCode = (allowEmpty:boolean)=> createFieldEmptyValidator('verifyCode',allowEmpty);
 
 export const validatePassword =(allowEmpty:boolean)=> createFieldEmptyValidator('password',allowEmpty);
