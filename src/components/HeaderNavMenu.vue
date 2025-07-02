@@ -2,7 +2,7 @@
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {Bell, Message, Search} from '@element-plus/icons-vue'
-import {useUserStore} from "~/stroage/modules/user";
+import {useUserStore} from "~/stores/userStore";
 
 const userStore = useUserStore();
 const isLoggedIn = computed(()=> userStore.isLoggedIn)

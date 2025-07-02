@@ -1,6 +1,6 @@
-import type {ErrorMessageKey} from '@/types/ErrorCode';
-import {ERROR_CODE_MESSAGE_KEY_MAP, ErrorCode} from '@/types/ErrorCode';
-import {translate} from "~/utils/utils";
+import type {ErrorMessageKey} from '~/types/ErrorCodeEnum';
+import {ERROR_CODE_MESSAGE_KEY_MAP, ErrorCode} from '~/types/ErrorCodeEnum';
+import {translate} from "~/utils/common";
 
 /**
  * Return the translated error message reference to error code

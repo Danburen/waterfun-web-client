@@ -2,11 +2,11 @@
 import request from "~/utils/requests/axiosRequest";
 import {onBeforeMount, reactive, ref} from "vue";
 import {ElMessage, type FormInstance, type FormRules} from "element-plus";
-import {deBounce, throttle} from "@/utils/TriggerControl.js"
+import {deBounce, throttle} from "~/utils/triggerControl.js"
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
-import AuthBox from "~/components/auth/authBox.vue";
+import AuthBox from "~/components/auth/AuthBox.vue";
 import type {LoginRequest, LoginType} from '@/types/LoginRequest'
-import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/Validator";
+import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/validator";
 import type {ElInput} from "../../.nuxt/components";
 import {undefined} from "zod";
 
@@ -212,7 +212,7 @@ onBeforeMount(() => {
                   class="login-input"
               >
                 <template #append>
-                  <VerifyingCodeButton :username="fastLoginForm.username" :getType="fastLoginForm.username.includes('@') ? 'email_code' : 'sms_code'" :codePurpose="'login'"></VerifyingCodeButton>
+                  <VerifyingCodeButton :username="fastLoginForm.username" :getType="fastLoginForm.username.includes('@') ? 'email' : 'sms'" :codePurpose="'login'"></VerifyingCodeButton>
                 </template>
               </el-input>
             </el-form-item>

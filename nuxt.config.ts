@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   },
   modules:['@nuxtjs/i18n',
     ['@element-plus/nuxt',{importStyle: 'css', themes: ['dark']}],
-    '@pinia/nuxt'],
+    '@pinia/nuxt','pinia-plugin-persistedstate/nuxt'],
   plugins: ['@/plugins/async-validator.client'],
   i18n:{
     strategy: 'no_prefix', // no prefix router

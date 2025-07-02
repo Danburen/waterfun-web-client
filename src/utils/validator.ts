@@ -1,6 +1,6 @@
 import type {LoginType} from "~/types/LoginRequest";
-import {REGEX} from "~/utils/Regex";
-import {translate} from "~/utils/utils";
+import {REGEX} from "~/utils/regex";
+import {translate} from "~/utils/common";
 
 const keyPrefix = 'auth.validate.'
 

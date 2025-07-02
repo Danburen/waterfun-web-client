@@ -4,7 +4,7 @@ import {type FormInstance, type FormRules} from "element-plus";
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import type {ElInput} from "../../.nuxt/components";
 import {validateEmail, validatePassword, validatePhoneNumber} from "../../.nuxt/imports";
-import {validateUsername} from "~/utils/Validator";
+import {validateUsername} from "~/utils/validator";
 
 const registerFormRef = ref<FormInstance>()
 

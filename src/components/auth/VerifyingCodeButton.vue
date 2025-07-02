@@ -2,14 +2,15 @@
 import request from "~/utils/requests/axiosRequest";
 import {ElMessage} from "element-plus";
 import {useI18n} from 'vue-i18n';
+import type {SendCodeType} from "~/types/BaseType";
+import {sendCode} from "~/api/authApi";
 
 const i18n = useI18n();
 
-// 定义 props
 const props = defineProps<{
   username: string
-  getType: 'sms_code' | 'email_code'
-  codePurpose: 'login' | 'register' | 'reset_password'
+  getType: 'sms' | 'email'
+  codePurpose: 'login' | 'register' | 'resetPassword'
 }>();
 
 const countDown = ref(0);
@@ -19,12 +20,12 @@ const getVerifyingCode = () => {
   if(countDown.value > 0) return;
   // 构建请求参数
   let requestData: any = {};
-  if (props.getType === 'sms_code') {
+  if (props.getType === 'sms') {
     requestData = {
       phoneNumber: props.username,
       purpose: props.codePurpose
     };
-  } else if (props.getType === 'email_code') {
+  } else if (props.getType === 'email') {
     requestData = {
       email: props.username,
       purpose: props.codePurpose
@@ -37,14 +38,9 @@ const getVerifyingCode = () => {
 }
 
 const throttledSendCode =
-  throttle((requestData: {
-    phoneNumber?: string;
-    email?: string;
-    purpose: 'login' | 'register' | 'reset_password'
-  }) => {
+  throttle((requestData: SendCodeType) => {
     console.log("code sent", requestData);
-    const url = props.getType === 'sms_code' ? '/auth/sendSmsCode' : '/auth/sendEmailCode';
-    request.post(url, requestData)
+    sendCode(requestData,props.getType)
         .then(res => {
           if (res.data.code === 200) {
             ElMessage.success(i18n.t('message.success.verificationCodeSent'));
