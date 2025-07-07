@@ -2,18 +2,20 @@
 import request from "~/utils/requests/axiosRequest";
 import {onBeforeMount, reactive, ref} from "vue";
 import {ElMessage, type FormInstance, type FormRules} from "element-plus";
-import {deBounce, throttle} from "~/utils/triggerControl.js"
+import {deBounce, throttle} from "~/utils/triggerControl"
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import AuthBox from "~/components/auth/AuthBox.vue";
 import type {LoginRequest, LoginType} from '@/types/LoginRequest'
 import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/validator";
 import type {ElInput} from "../../.nuxt/components";
-import {undefined} from "zod";
+import useUserStore from "~/stores/userStore";
+import userStore from "~/stores/userStore";
 
 type LoginTabType = 'password'|'fast-auth';
 
 const i18n = useI18n();
 const router = useRouter();
+const { login } = useUserStore();
 
 const passAuthForm = ref<FormInstance>();
 const fastAuthForm = ref<FormInstance>();
@@ -76,19 +78,8 @@ const submitForm = (form:FormInstance | undefined) => {
   form.validate((valid)=>{
     buttonLoad.value = true;
     if(valid){
-      request.post('auth/login',buildRequest()).then(res=>{
-        console.log(res.data)
-        ElMessage({
-          message: i18n.t('message.success.loginSuccess'),
-          type: "success"
-        })
-        router.push('index');
-      }).catch(err=>{
+      login(buildRequest()).catch(err=>{
         console.log(err.data.message);
-        ElMessage({
-          message: getErrorMessage(err.data.code),
-          type: "error"
-        })
         switch (err.data.code) {
           case 40004:
           case 40006:

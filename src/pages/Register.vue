@@ -59,7 +59,7 @@ const handleRegister = () => {
             :placeholder="$t('auth.placeholder.verifyCode')"
             class="login-input">
           <template #append>
-            <VerifyingCodeButton :getType="registerForm.phone ? 'sms_code' : 'email_code'" :codePurpose="'register'"></VerifyingCodeButton>
+            <VerifyingCodeButton :username="registerForm.username" :getType="registerForm.phone ? 'sms' : 'email'" :codePurpose="'register'"></VerifyingCodeButton>
           </template>
         </el-input>
       </el-form-item>

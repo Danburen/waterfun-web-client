@@ -1,30 +1,55 @@
 import { defineStore } from "pinia";
 import type {LoginRequest, RegisterRequest} from "~/types/LoginRequest";
+import { authApi } from "~/api/authApi";
+import {ElMessage} from "element-plus";
+import type {LoginResponseDataType} from "~/api/types/LoginResponseType";
+
+interface UserData{
+    userId: number | null,
+    username: string,
+    expireIn: number,
+    lastLoginTime: number,
+}
 
 const useUserStore = defineStore('userStore',()=>{
-    const userId = ref<number|null>(null)
-    const username = ref<string>('')
-    const expireIn = ref<number>(0)
-    const lastLoginTime = ref<number>(0)
-
-    const isLoginIn = computed(()=>{
-        return !!userId && Date.now() < (lastLoginTime.value + expireIn.value * 1000)
+    const userData = ref<UserData>({
+        userId: null,
+        username: '',
+        expireIn: 0,
+        lastLoginTime: 0,
     })
 
-    const login = async (loginRequest:LoginRequest) => {
-        await login(loginRequest)
-    }
+    const isLoginIn = computed(()=>{
+        return !!userData.value.userId && Date.now() < (userData.value.lastLoginTime + userData.value.expireIn * 1000)
+    })
 
-    const register = async (registerRequest:RegisterRequest) => {
-        await register(registerRequest)
-    }
+    const login = (loginRequest: LoginRequest) =>
+        authApi.login(loginRequest).then(response => {
+            userData.value = {
+                userId: response.data.userId,
+                username: response.data.username,
+                expireIn: response.data.expireIn,
+                lastLoginTime: Date.now(),
+            }
+            return response
+        })
 
-    const logout = async () => {
+    const register = (registerRequest: RegisterRequest) =>
+        authApi.register(registerRequest).then(response => {
+            userData.value = {
+                userId: response.data.userId,
+                username: response.data.username,
+                expireIn: response.data.expireIn,
+                lastLoginTime: Date.now(),
+            }
+            return response
+        })
 
-    }
+    const logout = () => authApi.logout()
 
     return{
-        userId,username,expireIn,lastLoginTime,isLoginIn,
+        userData,
+        isLoginIn,
         login,
         register,
     }

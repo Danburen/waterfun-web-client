@@ -1,9 +1,12 @@
 import axios from 'axios'
+import { ElMessage } from "element-plus";
+import { translate } from "~/utils/common";
 
 declare module 'axios' {
     interface AxiosRequestConfig {
         meta?: {
             needsCSRF?: boolean;
+            showError?: boolean;
         };
     }
 }
@@ -54,43 +57,52 @@ service.interceptors.response.use(
         if (response.status !== 200) {
             return Promise.reject(new Error(response.data.message || 'Error'))
         } else {
-            return response
+            return response.data
         }
     },
     error => {
+        const showError = error.config.meta?.showError !== false;
+        let errMessage = 'Unknown Error'
         if(error.response) {
             const status = error.response.status
             const data  = error.response.data;
+            errMessage = getErrorMessage(error.response.data.code) || `HTTP ERROR ${status}`
             switch (status) {
                 case 400:
-                    return Promise.reject({
-                        data: data,
-                        status: status,
-                        message: `Bad Request ${status}`
-                    });
-                case 401: window.location.href = '/login';break;
+                    errMessage = data.message || 'Request query incorrect.';break;
+                case 401:
+                    window.location.href = '/login'
+                    return Promise.reject(new Error('Unauthorized'))
                 case 403:
-                    return Promise.reject({
-                        data: data,
-                        status: status,
-                        message: `Forbidden ${status}`
-                    });
+                    errMessage = data.message || 'Forbidden';break;
                 case 500:
-                    return Promise.reject(data.message || 'Server Error');
-                default:
-                    return Promise.reject({
-                        data: data,
-                        status: status,
-                        message: `Http Error ${status}`,
-                    });
-
+                    errMessage = data.message || 'Internal Server Error';break;
             }
+            if(showError) {
+                ElMessage({
+                    message: translate(errMessage),
+                    type: 'error',
+                    duration: 3000
+                })
+            }
+            return Promise.reject({
+                status: status,
+                message: errMessage,
+                data: data
+            })
         }else if(error.request) {
             // no response
-            return Promise.reject(new Error('Network Error'));
+            errMessage = 'Network Error'
         }else{
-            return Promise.reject(new Error(error.message));
+            errMessage = 'Send Request Error';
         }
+        if(showError) {
+            ElMessage({
+                message: errMessage,
+                type: 'error',
+            })
+        }
+        return Promise.reject(new Error(errMessage));
     }
 )
 

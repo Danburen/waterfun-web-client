@@ -3,7 +3,7 @@ import request from "~/utils/requests/axiosRequest";
 import {ElMessage} from "element-plus";
 import {useI18n} from 'vue-i18n';
 import type {SendCodeType} from "~/types/BaseType";
-import {sendCode} from "~/api/authApi";
+import { authApi } from "~/api/authApi";
 
 const i18n = useI18n();
 
@@ -40,15 +40,12 @@ const getVerifyingCode = () => {
 const throttledSendCode =
   throttle((requestData: SendCodeType) => {
     console.log("code sent", requestData);
-    sendCode(requestData,props.getType)
+    authApi.sendCode(requestData,props.getType)
         .then(res => {
           if (res.data.code === 200) {
             ElMessage.success(i18n.t('message.success.verificationCodeSent'));
           }
         })
-        .catch(err => {
-          ElMessage.error(err.data.message || i18n.t('message.error.verificationCodeSendFailed'));
-        });
   }, 5000,()=>{
     ElMessage.error(i18n.t('message.throttled.clickTooFast'));
   });
