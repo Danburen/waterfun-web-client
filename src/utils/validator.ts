@@ -114,4 +114,28 @@ export const createFieldValidator = (
 
 export const validateVerifyCode = (allowEmpty:boolean)=> createFieldEmptyValidator('verifyCode',allowEmpty);
 
-export const validatePassword =(allowEmpty:boolean)=> createFieldEmptyValidator('password',allowEmpty);
+export const validatePassword = (allowEmpty?: boolean) => {
+    return (rule: any, value: any, callback: any) => {
+        if (!value && !allowEmpty) {
+            callback(new Error(translate(keyPrefix + 'passwordEmpty')));
+            return;
+        }
+
+        if (allowEmpty && !value) {
+            callback();
+            return;
+        }
+
+        if (value.length <= 8) {
+            callback(new Error(translate(keyPrefix + 'passwordTooShort')));
+            return;
+        }
+
+        if (!/[a-z]/.test(value) || !/[A-Z]/.test(value) || !/[0-9]/.test(value)) {
+            callback(new Error(translate(keyPrefix + 'passwordInvalid')));
+            return;
+        }
+
+        callback();
+    };
+};

@@ -5,7 +5,7 @@ interface BaseLoginRequest{
 }
 
 interface BasicRegisterRequest{
-    phone: number,
+    phone: string,
     username: string,
     smsCode: string,
 }

@@ -3,8 +3,10 @@ import {InfoFilled} from '@element-plus/icons-vue'
 import {type FormInstance, type FormRules} from "element-plus";
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import type {ElInput} from "../../.nuxt/components";
-import {validateEmail, validatePassword, validatePhoneNumber} from "../../.nuxt/imports";
+import {validateEmail, validatePassword, validatePhoneNumber} from "~/utils/validator";
 import {validateUsername} from "~/utils/validator";
+import useUserStore from "~/stores/userStore";
+import type {RegisterRequest} from "~/types/LoginRequest";
 
 const registerFormRef = ref<FormInstance>()
 
@@ -12,6 +14,8 @@ const buttonLoad = ref(false)
 const expandShow = ref(true)
 const licenceCheck = ref(false)
 const router = useRouter();
+
+const { register } = useUserStore();
 
 const registerForm = reactive({
   phone: '',
@@ -30,7 +34,13 @@ const regRules = reactive<FormRules<typeof registerForm>>({
 })
 
 const handleRegister = () => {
-
+  register(registerForm as RegisterRequest).then(()=> {
+    ElMessage({
+      message: translate('message.success.registerSuccess'),
+      type: "success",
+    })
+    router.push("/")
+  })
 }
 
 </script>
@@ -59,7 +69,7 @@ const handleRegister = () => {
             :placeholder="$t('auth.placeholder.verifyCode')"
             class="login-input">
           <template #append>
-            <VerifyingCodeButton :username="registerForm.username" :getType="registerForm.phone ? 'sms' : 'email'" :codePurpose="'register'"></VerifyingCodeButton>
+            <VerifyingCodeButton :username="registerForm.phone" :getType="registerForm.phone ? 'sms' : 'email'" :codePurpose="'register'"></VerifyingCodeButton>
           </template>
         </el-input>
       </el-form-item>
@@ -89,7 +99,7 @@ const handleRegister = () => {
         </div>
       </el-collapse-transition>
       <el-form-item label-width="auto">
-        <el-button type="primary" class="login-btn" @click="">{{ $t('auth.btn.register') }}</el-button>
+        <el-button type="primary" class="login-btn" @click="handleRegister">{{ $t('auth.btn.register') }}</el-button>
         <div class="addition-container">
           <el-checkbox size="small" v-model="licenceCheck">
             {{ $t('confirm.confirmReadLicences')  + ' ' }}

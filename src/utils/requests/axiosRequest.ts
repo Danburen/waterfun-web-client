@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ElMessage } from "element-plus";
 import { translate } from "~/utils/common";
+import {getErrorMessage} from "~/utils/errorMessage";
 
 declare module 'axios' {
     interface AxiosRequestConfig {
@@ -19,7 +20,7 @@ const service = axios.create({
 
 // request interceptors
 service.interceptors.request.use(
-    config => {
+    async config => {
         // const token = getToken();
         // if (token) {
         //     config.headers.Authorization = `Bearer ${token}`;
@@ -27,18 +28,25 @@ service.interceptors.request.use(
 
         const isSkip = CSRF_SKIP_LIST.some((path: string) => config.url?.includes(path));
         const needsCSRF = config.meta?.needsCSRF !== false && !isSkip;
-        if(config.method !== 'GET' && needsCSRF) {
-            const  CSRFToken = getCsrfToken()
-            if(CSRFToken) {
-                config.headers['X-XSRF-TOKEN'] = CSRFToken;
-                console.log(config);
-            }else {
-                console.warn('CSRF Token not found in cookies!');
+        if (config.method !== 'GET' && needsCSRF) {
+            let CSRFToken = getCsrfToken()
+            if (!CSRFToken) {
+                console.log('First request,now try get csrf token');
+                try {
+                    const response = await fetch(`${import.meta.env.VITE_API_BASE}/auth/csrf-token`, {
+                        credentials: 'include'
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch CSRF Token');
+                    CSRFToken = getCsrfToken();
+                } catch (error) {
+                    return Promise.reject(error);
+                }
             }
+            config.headers['X-XSRF-TOKEN'] = CSRFToken;
         }
 
-        if(config.method == 'GET') {
-            config.params =  {
+        if (config.method == 'GET') {
+            config.params = {
                 _t: Date.now(),
                 _n: Math.random().toString(36).slice(2),
                 ...config.params
@@ -55,6 +63,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         if (response.status !== 200) {
+            console.error(response);
             return Promise.reject(new Error(response.data.message || 'Error'))
         } else {
             return response.data
@@ -62,39 +71,28 @@ service.interceptors.response.use(
     },
     error => {
         const showError = error.config.meta?.showError !== false;
-        let errMessage = 'Unknown Error'
+        let errMessage
         if(error.response) {
             const status = error.response.status
-            const data  = error.response.data;
             errMessage = getErrorMessage(error.response.data.code) || `HTTP ERROR ${status}`
             switch (status) {
-                case 400:
-                    errMessage = data.message || 'Request query incorrect.';break;
                 case 401:
                     window.location.href = '/login'
                     return Promise.reject(new Error('Unauthorized'))
-                case 403:
-                    errMessage = data.message || 'Forbidden';break;
-                case 500:
-                    errMessage = data.message || 'Internal Server Error';break;
             }
             if(showError) {
                 ElMessage({
-                    message: translate(errMessage),
+                    message: errMessage,
                     type: 'error',
                     duration: 3000
                 })
             }
-            return Promise.reject({
-                status: status,
-                message: errMessage,
-                data: data
-            })
+            return Promise.reject(new Error(error.response ? 'Network Error' : 'Send Request Error'))
         }else if(error.request) {
             // no response
-            errMessage = 'Network Error'
+            errMessage = translate("message.error.networkError")
         }else{
-            errMessage = 'Send Request Error';
+            errMessage = translate("message.error.sendRequestError");
         }
         if(showError) {
             ElMessage({

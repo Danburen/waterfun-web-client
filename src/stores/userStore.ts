@@ -20,7 +20,7 @@ const useUserStore = defineStore('userStore',()=>{
     })
 
     const isLoginIn = computed(()=>{
-        return !!userData.value.userId && Date.now() < (userData.value.lastLoginTime + userData.value.expireIn * 1000)
+        return userData.value.userId && Date.now() < (userData.value.lastLoginTime + userData.value.expireIn * 1000)
     })
 
     const login = (loginRequest: LoginRequest) =>
@@ -45,11 +45,19 @@ const useUserStore = defineStore('userStore',()=>{
             return response
         })
 
-    const logout = () => authApi.logout()
+    const logout = () => {
+        return authApi.logout().then(() => {
+            userData.value.userId = null
+            userData.value.username = ''
+            userData.value.expireIn = 0
+            userData.value.lastLoginTime = 0
+        })
+    }
 
     return{
         userData,
         isLoginIn,
+        logout,
         login,
         register,
     }

@@ -9,7 +9,7 @@ import type {LoginRequest, LoginType} from '@/types/LoginRequest'
 import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/validator";
 import type {ElInput} from "../../.nuxt/components";
 import useUserStore from "~/stores/userStore";
-import userStore from "~/stores/userStore";
+import {authApi} from "~/api/authApi";
 
 type LoginTabType = 'password'|'fast-auth';
 
@@ -78,8 +78,13 @@ const submitForm = (form:FormInstance | undefined) => {
   form.validate((valid)=>{
     buttonLoad.value = true;
     if(valid){
-      login(buildRequest()).catch(err=>{
-        console.log(err.data.message);
+      login(buildRequest()).then(()=>{
+        ElMessage({
+          message: translate("message.success.loginSuccess"),
+          type: "success",
+        })
+        router.push('/');
+      }).catch(err=>{
         switch (err.data.code) {
           case 40004:
           case 40006:
@@ -109,8 +114,8 @@ watch(()=>fastLoginForm.username,deBounce((value:string)=>{
 const refreshCaptcha = throttle(()=>{
   if(! captchaLoading.value){ 
     captchaLoading.value = true;
-    request.get('/auth/captcha',{responseType: 'arraybuffer',meta:{ needsCSRF: false }}).then(res=>{
-      const base64 = convertArrayBufferToBase64(res.data);
+    authApi.getCaptcha().then(res=>{
+      const base64 = convertArrayBufferToBase64(res);
       captchaImage.value = `data:image/jpeg;base64,${base64}`;
     }).catch(err=>{
       ElMessage.error(i18n.t('message.error.apiError'));

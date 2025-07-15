@@ -2,18 +2,18 @@
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {Bell, Message, Search} from '@element-plus/icons-vue'
-import {useUserStore} from "~/stores/userStore";
+import useUserStore from "~/stores/userStore";
 
 const userStore = useUserStore();
-const isLoggedIn = computed(()=> userStore.isLoggedIn)
-
+const isLoggedIn = computed(()=> userStore.isLoginIn)
+const { userData } = useUserStore()
 
 const router = useRouter()
 const searchQuery = ref('')
 const unreadNOTICount = ref(5)
 const unreadMSGCount = ref(5)
 
-const userName = ref('')
+const userName = ref(userData.username)
 const userEmail = ref('zhangsan@example.com')
 const userAvatar = ref('https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png')
 
@@ -34,7 +34,13 @@ const handleMessage = () => {
 }
 
 const handleLogout = () => {
-  console.log('用户退出登录')
+  userStore.logout().then(() => {
+    ElMessage({
+      message: translate('message.success.logoutSuccess'),
+      type: 'success'
+    })
+    router.push('/login')
+  })
 }
 
 const handleCommand = (command:string) => {
@@ -54,6 +60,11 @@ const handleCommand = (command:string) => {
 const handleLogin = ()=>{
   router.push('/login')
 }
+
+onMounted(()=>{
+  console.log(userData)
+  console.log(userStore.isLoginIn)
+})
 </script>
 
 
