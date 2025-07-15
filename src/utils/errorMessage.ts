@@ -5,24 +5,17 @@ import { HttpStatus } from "~/types/ErrorCodeEnum";
 /**
  * get the error code translate message
  * @param code error code
- * @param defaultMessage default message
+
  * @return translated error code message
  */
-export function getErrorMessage(
-    code: ErrorCode | HttpStatus,
-    defaultMessage?: string
-): string {
+export function getErrorMessage(code: ErrorCode | HttpStatus,): string {
     if (Object.values(HttpStatus).includes(code as HttpStatus)) {
-        return translate(`message.error.http.${code}`) ||
-            defaultMessage ||
-            translate('message.error.unknownError')
+        return translate(`message.error.http.${code}`)
     }
 
     const messageKey = ERROR_CODE_MESSAGE_KEY_MAP[code] || 'unknownError'
-
     if (messageKey === 'unknownError') {
-        return defaultMessage ||
-            translate('message.error.unknownError') + ` (${code})`
+        return translate('message.error.unknownError') + ` (${code})`
     }
 
     if (code >= 40100 && code <= 40199) {
