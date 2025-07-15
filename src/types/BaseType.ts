@@ -1,5 +1,3 @@
-import type {LoginRequest} from "~/types/LoginRequest";
-
 export type SendCodeType = {
     phoneNumber?: string;
     email?: string;
@@ -16,3 +14,10 @@ export type ApiResponse<T = any> = {
 export type DataApiResponse<T> = Required<Pick<ApiResponse<T>, 'data'>> & ApiResponse<T>;
 // only have message
 export type MessageApiResponse = Required<Pick<ApiResponse, 'message'>> & ApiResponse;
+
+//lang
+export type LanguageTypes = 'en_US' | 'zh_CN'
+export const LangMap: Record<string, LanguageTypes> = {
+    'en': 'en_US',
+    'zh': 'zh_CN',
+}

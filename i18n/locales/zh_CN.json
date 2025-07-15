@@ -15,6 +15,9 @@
     "info": "个人信息",
     "nickname": "用户昵称"
   },
+  "info": {
+    "lastUpdateTime": "最后更新于 {time}"
+  },
   "status": {
     "alLogin": "已登录",
     "noLogin": "未登录"
@@ -71,7 +74,9 @@
       "invalidEmail": "邮箱格式有误",
       "captchaEmpty": "图形验证码不能为空",
       "smsCodeEmpty": "手机验证码不能为空",
-      "emailCodeEmpty": "邮箱验证码不能为空"
+      "emailCodeEmpty": "邮箱验证码不能为空",
+      "passwordTooShort": "密码长度必须大于8个字符",
+      "passwordInvalid": "密码必须包含大小写字母和数字!"
     }
   },
   "message": {
@@ -84,6 +89,10 @@
         "404": "资源未找到",
         "500": "服务器内部错误"
       },
+      "apiError": "接口错误",
+      "unknownError": "未知错误",
+      "networkError": "网络错误",
+      "sendRequestError": "发送请求失败",
       "badRequest": {
         "usernameEmptyOrInvalid": "登录名不能为空或格式不正确",
         "passwordEmpty": "密码不能为空",
@@ -121,10 +130,10 @@
         "verificationCodeSendFailed": "验证码发送失败，请稍后再试",
         "unknownError": "未知错误"
       }
-    }
-  },
+    },
     "success": {
       "loginSuccess": "登录成功",
+      "registerSuccess": "注册成功",
       "verificationCodeSent": "验证码已发送,请注意查收",
       "logoutSuccess": "登出成功"
     },

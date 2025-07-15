@@ -1,7 +1,6 @@
 import type {LoginRequest, RegisterRequest} from "~/types/LoginRequest";
 import request from "~/utils/requests/axiosRequest"
 import type {SendCodeType} from "~/types/BaseType";
-import {verify} from "node:crypto";
 import type {LoginResponseDataType} from "~/api/types/LoginResponseType";
 
 export const authApi = {
@@ -20,7 +19,7 @@ export const authApi = {
         return request.post('/auth/register', registerRequest);
     },
 
-    getCaptcha() {
+    getCaptcha():Promise<ArrayBuffer> {
         return request.get('/auth/captcha', {
             responseType: 'arraybuffer',
             meta: { needsCSRF: false }
@@ -28,11 +27,11 @@ export const authApi = {
     },
 
     sendSmsCode(sendCodeData: SendCodeType) {
-        return request.post('/auth/sendSmsCode', sendCodeData);
+        return request.post('/auth/send-sms-code', sendCodeData);
     },
 
     sendEmailCode(sendCodeData: SendCodeType) {
-        return request.post('/auth/sendEmailCode', sendCodeData);
+        return request.post('/auth/send-email-code', sendCodeData);
     },
 
     sendCode(sendCodeData: SendCodeType, verifyCodeType: 'sms' | 'email') {
@@ -43,5 +42,9 @@ export const authApi = {
 
     logout() {
         return request.post('/auth/logout');
+    },
+
+    getCsrfToken() {
+        return request.get('/auth/csrf-token');
     }
 };
