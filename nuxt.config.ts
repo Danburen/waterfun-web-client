@@ -30,8 +30,8 @@ export default defineNuxtConfig({
         cookieKey: 'i18n_redirected'
     },
     locales: [
-      { code: 'zh_CN', iso: 'zh-CN', file: 'zh-CN.js' },
-      { code: 'en_US', iso: 'en-US', file: 'en-US.js' }
+        { code: 'en' , file: "en_US.json"},
+        { code: 'zh' , file: "zh_CN.json"},
     ],
     lazy: true,
     langDir: 'locales',
