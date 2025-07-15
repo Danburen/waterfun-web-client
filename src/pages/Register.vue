@@ -103,7 +103,7 @@ const handleRegister = () => {
         <div class="addition-container">
           <el-checkbox size="small" v-model="licenceCheck">
             {{ $t('confirm.confirmReadLicences')  + ' ' }}
-            <a href="/" >{{ $t('confirm.userAgreement') }}</a>
+            <a @click.prevent="router.push('/legal/eulaView')" >{{ $t('confirm.userAgreement') }}</a>
           </el-checkbox>
           <el-button  size="small" link class="to-login" @click.prevent="router.push('/login')">{{ $t('auth.toLogin') }}</el-button>
         </div>

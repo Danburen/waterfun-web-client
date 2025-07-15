@@ -74,7 +74,7 @@ service.interceptors.response.use(
         let errMessage
         if(error.response) {
             const status = error.response.status
-            errMessage = getErrorMessage(error.response.data.code) || `HTTP ERROR ${status}`
+            errMessage = getErrorMessage(error.response.data.code || error.response.status)
             switch (status) {
                 case 401:
                     window.location.href = '/login'
