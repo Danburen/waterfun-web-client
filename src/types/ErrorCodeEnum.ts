@@ -15,7 +15,7 @@ export enum ErrorCode {
 
     // user info related error
     USERNAME_EMPTY_OR_INVALID = 40001,
-    PASSWORD_EMPTY = 40002,
+    PASSWORD_EMPTY_OR_INVALID = 40002,
     USERNAME_OR_PASSWORD_INCORRECT = 40003,
     CAPTCHA_EXPIRED = 40004,
     CAPTCHA_INCORRECT = 40005,
@@ -39,6 +39,9 @@ export enum ErrorCode {
     PERMISSION_NOT_FOUND = 40021,
     PERMISSION_ALREADY_EXISTS = 40022,
     REDUNDANT_OPERATION = 40023,
+    INVALID_PATH = 40024,
+    REQUEST_NOT_IN_WHITELIST = 40025,
+    INVALID_CONTENT_TYPE = 40026,
 
     // auth error
     ACCESS_TOKEN_EXPIRED = 40101,
@@ -51,7 +54,7 @@ export enum ErrorCode {
 
 // 错误消息键类型
 export type ErrorMessageKey =
-    | 'usernameEmptyOrInvalid' | 'passwordEmpty' | 'usernameOrPasswordIncorrect'
+    | 'usernameEmptyOrInvalid' | 'passwordEmptyOrInvalid' | 'usernameOrPasswordIncorrect'
     | 'captchaExpired' | 'captchaIncorrect' | 'captchaEmpty'
     | 'verifyCodeExpired' | 'verifyCodeIncorrect'
     | 'smsCodeExpired' | 'smsCodeIncorrect' | 'smsCodeEmpty'
@@ -63,7 +66,7 @@ export type ErrorMessageKey =
     | 'redundantOperation'
     | 'accessTokenExpired' | 'accessTokenInvalid' | 'accessTokenMissing'
     | 'refreshTokenExpired' | 'refreshTokenInvalid' | 'refreshTokenMissing'
-    | 'unknownError'
+    | 'unknownError' | 'invalidPath' | 'invalidContentType' | 'requestNotInWhiteList'
 
 // Error message mapper
 export const ERROR_CODE_MESSAGE_KEY_MAP: Record<number, ErrorMessageKey> = {
@@ -72,7 +75,7 @@ export const ERROR_CODE_MESSAGE_KEY_MAP: Record<number, ErrorMessageKey> = {
 
     // user info error
     [ErrorCode.USERNAME_EMPTY_OR_INVALID]: 'usernameEmptyOrInvalid',
-    [ErrorCode.PASSWORD_EMPTY]: 'passwordEmpty',
+    [ErrorCode.PASSWORD_EMPTY_OR_INVALID]: 'passwordEmptyOrInvalid',
     [ErrorCode.USERNAME_OR_PASSWORD_INCORRECT]: 'usernameOrPasswordIncorrect',
     [ErrorCode.CAPTCHA_EXPIRED]: 'captchaExpired',
     [ErrorCode.CAPTCHA_INCORRECT]: 'captchaIncorrect',
@@ -103,5 +106,9 @@ export const ERROR_CODE_MESSAGE_KEY_MAP: Record<number, ErrorMessageKey> = {
     [ErrorCode.ACCESS_TOKEN_MISSING]: 'accessTokenMissing',
     [ErrorCode.REFRESH_TOKEN_EXPIRED]: 'refreshTokenExpired',
     [ErrorCode.REFRESH_TOKEN_INVALID]: 'refreshTokenInvalid',
-    [ErrorCode.REFRESH_TOKEN_MISSING]: 'refreshTokenMissing'
+    [ErrorCode.REFRESH_TOKEN_MISSING]: 'refreshTokenMissing',
+
+    [ErrorCode.INVALID_PATH]: 'invalidPath',
+    [ErrorCode.INVALID_CONTENT_TYPE]: 'invalidContentType',
+    [ErrorCode.REQUEST_NOT_IN_WHITELIST]: 'requestNotInWhiteList',
 }
