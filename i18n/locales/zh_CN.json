@@ -16,7 +16,7 @@
     "nickname": "用户昵称"
   },
   "info": {
-    "lastUpdateTime": "最后更新于 {time}"
+    "lastUpdateTime": "最后更新于 {year} 年 {month} 月 {date} 日"
   },
   "status": {
     "alLogin": "已登录",

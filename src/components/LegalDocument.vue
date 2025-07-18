@@ -11,7 +11,10 @@ defineProps<LegalDocPropsType>()
 <template>
   <div class="header-container">
     <div class="title" style="font-size: 30px">{{ title }}</div>
-    <div class="content">{{$t('info.lastUpdateTime') + lastUpdate}}</div>
+    <div class="content">{{$t('info.lastUpdateTime',
+        { year:lastUpdate.getFullYear(),
+          month: lastUpdate.getMonth() + 1,
+          date: lastUpdate.getDate()  })}}</div>
   </div>
   <div class="content-container">
     {{content}}
@@ -50,7 +53,8 @@ defineProps<LegalDocPropsType>()
   min-height: 300px; /* 确保内容区域有最小高度 */
   color: #333; /* 深灰色文字提升可读性 */
   box-shadow: 0 0 15px rgba(173, 216, 230, 0.2); /* 淡蓝色阴影柔和过渡 */
-  margin: 0 auto;
+  margin: 10px auto;
   max-width: 1200px; /* 限制内容宽度避免过宽 */
+  white-space: pre-wrap; /* 换行 */
 }
 </style>
