@@ -10,10 +10,12 @@ import type {RegisterRequest} from "~/types/LoginRequest";
 
 const registerFormRef = ref<FormInstance>()
 
-const buttonLoad = ref(false)
-const expandShow = ref(true)
-const licenceCheck = ref(false)
+const buttonLoad = ref(false);
+const licenceCheck = ref(false);
+const expandShow = ref(true);
+
 const router = useRouter();
+const route = useRoute();
 
 const { register } = useUserStore();
 
@@ -34,15 +36,25 @@ const regRules = reactive<FormRules<typeof registerForm>>({
 })
 
 const handleRegister = () => {
+  buttonLoad.value = true;
   register(registerForm as RegisterRequest).then(()=> {
     ElMessage({
       message: translate('message.success.registerSuccess'),
       type: "success",
     })
     router.push("/")
+  }).finally(()=> {
+    buttonLoad.value = false;
   })
 }
 
+watch(() => route.query.userAgreementConfirm, (val) => {
+  if (val === 'true') {
+    console.log("User Agreement Confirm");
+    licenceCheck.value = true;
+    router.replace({ query: {} })
+  }
+}, { immediate: true })
 </script>
 
 <template>
@@ -99,13 +111,13 @@ const handleRegister = () => {
         </div>
       </el-collapse-transition>
       <el-form-item label-width="auto">
-        <el-button type="primary" class="login-btn" @click="handleRegister">{{ $t('auth.btn.register') }}</el-button>
+        <el-button type="primary" class="login-btn" @click="handleRegister" :loading="buttonLoad" :disabled="!licenceCheck">{{ $t('auth.btn.register') }}</el-button>
         <div class="addition-container">
           <el-checkbox size="small" v-model="licenceCheck">
             {{ $t('confirm.confirmReadLicences')  + ' ' }}
             <a @click.prevent="router.push('/legal/eulaView')" >{{ $t('confirm.userAgreement') }}</a>
           </el-checkbox>
-          <el-button  size="small" link class="to-login" @click.prevent="router.push('/login')">{{ $t('auth.toLogin') }}</el-button>
+          <el-button  size="small" link class="to-login" @click.prevent="router.push('/login')" >{{ $t('auth.toLogin') }}</el-button>
         </div>
 
       </el-form-item>

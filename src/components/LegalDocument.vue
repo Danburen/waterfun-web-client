@@ -6,6 +6,12 @@ export interface LegalDocPropsType {
 }
 
 defineProps<LegalDocPropsType>()
+
+const emit = defineEmits(['confirm'])
+
+const handleClick = () =>{
+  emit('confirm')
+}
 </script>
 
 <template>
@@ -17,7 +23,12 @@ defineProps<LegalDocPropsType>()
           date: lastUpdate.getDate()  })}}</div>
   </div>
   <div class="content-container">
-    {{content}}
+    <div class="content-text">
+      {{content}}
+    </div>
+    <div class="button-container">
+      <el-button style="width: 80%" type="primary" @click="handleClick" size="large">{{$t('confirm.confirmReadLicences')}}</el-button>
+    </div>
   </div>
   <div class="footer-container">
     <div class="footer">
@@ -56,5 +67,18 @@ defineProps<LegalDocPropsType>()
   margin: 10px auto;
   max-width: 1200px; /* 限制内容宽度避免过宽 */
   white-space: pre-wrap; /* 换行 */
+
+  display: flex;
+  flex-direction: column;
+}
+
+.content-text {
+  flex: 1; /* 这将使内容区域占据剩余空间 */
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  margin-top: 20px; /* 添加一些顶部间距 */
 }
 </style>
