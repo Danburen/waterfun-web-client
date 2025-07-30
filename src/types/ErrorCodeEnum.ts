@@ -1,4 +1,6 @@
 // Basic http status
+import type { ToCamelCase } from "~/utils/dataMapper"
+
 export enum HttpStatus {
     OK = 200,
     BAD_REQUEST = 400,
@@ -52,63 +54,30 @@ export enum ErrorCode {
     REFRESH_TOKEN_MISSING = 40106
 }
 
-// 错误消息键类型
-export type ErrorMessageKey =
-    | 'usernameEmptyOrInvalid' | 'passwordEmptyOrInvalid' | 'usernameOrPasswordIncorrect'
-    | 'captchaExpired' | 'captchaIncorrect' | 'captchaEmpty'
-    | 'verifyCodeExpired' | 'verifyCodeIncorrect'
-    | 'smsCodeExpired' | 'smsCodeIncorrect' | 'smsCodeEmpty'
-    | 'emailCodeExpired' | 'emailCodeIncorrect' | 'emailCodeEmpty'
-    | 'phoneNumberEmptyOrInvalid' | 'emailAddressEmptyOrInvalid'
-    | 'userAlreadyExists' | 'userNotFound'
-    | 'roleNotFound' | 'roleAlreadyExists'
-    | 'permissionNotFound' | 'permissionAlreadyExists'
-    | 'redundantOperation'
-    | 'accessTokenExpired' | 'accessTokenInvalid' | 'accessTokenMissing'
-    | 'refreshTokenExpired' | 'refreshTokenInvalid' | 'refreshTokenMissing'
-    | 'unknownError' | 'invalidPath' | 'invalidContentType' | 'requestNotInWhiteList'
+export type AutoErrorCodeMap<T extends Record<string, number>> = {
+    [K in keyof T as K extends string ? ToCamelCase<K> : never]: K;
+};
 
-// Error message mapper
-export const ERROR_CODE_MESSAGE_KEY_MAP: Record<number, ErrorMessageKey> = {
-    // general error
-    [ErrorCode.UNKNOWN_ERROR]: 'unknownError',
+const ErrorCodeMap: Record<string, number> = Object.entries(ErrorCode)
+    .filter(([key]) => isNaN(Number(key))) // 过滤掉反向映射的数字键
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 
-    // user info error
-    [ErrorCode.USERNAME_EMPTY_OR_INVALID]: 'usernameEmptyOrInvalid',
-    [ErrorCode.PASSWORD_EMPTY_OR_INVALID]: 'passwordEmptyOrInvalid',
-    [ErrorCode.USERNAME_OR_PASSWORD_INCORRECT]: 'usernameOrPasswordIncorrect',
-    [ErrorCode.CAPTCHA_EXPIRED]: 'captchaExpired',
-    [ErrorCode.CAPTCHA_INCORRECT]: 'captchaIncorrect',
-    [ErrorCode.VERIFY_CODE_EXPIRED]: 'verifyCodeExpired',
-    [ErrorCode.VERIFY_CODE_INCORRECT]: 'verifyCodeIncorrect',
-    [ErrorCode.SMS_CODE_EXPIRED]: 'smsCodeExpired',
-    [ErrorCode.SMS_CODE_INCORRECT]: 'smsCodeIncorrect',
-    [ErrorCode.EMAIL_CODE_EXPIRED]: 'emailCodeExpired',
-    [ErrorCode.EMAIL_CODE_INCORRECT]: 'emailCodeIncorrect',
-    [ErrorCode.CAPTCHA_EMPTY]: 'captchaEmpty',
-    [ErrorCode.SMS_CODE_EMPTY]: 'smsCodeEmpty',
-    [ErrorCode.EMAIL_CODE_EMPTY]: 'emailCodeEmpty',
-    [ErrorCode.PHONE_NUMBER_EMPTY_OR_INVALID]: 'phoneNumberEmptyOrInvalid',
-    [ErrorCode.EMAIL_ADDRESS_EMPTY_OR_INVALID]: 'emailAddressEmptyOrInvalid',
-    [ErrorCode.USER_ALREADY_EXISTS]: 'userAlreadyExists',
-    [ErrorCode.USER_NOT_FOUND]: 'userNotFound',
+export type ErrorMessageKeyAuto = keyof AutoErrorCodeMap<typeof ErrorCodeMap>
 
-    // user role error
-    [ErrorCode.ROLE_NOT_FOUND]: 'roleNotFound',
-    [ErrorCode.ROLE_ALREADY_EXISTS]: 'roleAlreadyExists',
-    [ErrorCode.PERMISSION_NOT_FOUND]: 'permissionNotFound',
-    [ErrorCode.PERMISSION_ALREADY_EXISTS]: 'permissionAlreadyExists',
-    [ErrorCode.REDUNDANT_OPERATION]: 'redundantOperation',
+export const AUTO_ERROR_CODE_MESSAGE_KEY_MAP = createAutoErrorMap(ErrorCodeMap);
 
-    // auth error
-    [ErrorCode.ACCESS_TOKEN_EXPIRED]: 'accessTokenExpired',
-    [ErrorCode.ACCESS_TOKEN_INVALID]: 'accessTokenInvalid',
-    [ErrorCode.ACCESS_TOKEN_MISSING]: 'accessTokenMissing',
-    [ErrorCode.REFRESH_TOKEN_EXPIRED]: 'refreshTokenExpired',
-    [ErrorCode.REFRESH_TOKEN_INVALID]: 'refreshTokenInvalid',
-    [ErrorCode.REFRESH_TOKEN_MISSING]: 'refreshTokenMissing',
+export function createAutoErrorMap<T extends Record<string, number>>(enumObj: T): Record<number, ToCamelCase<keyof T & string>> {
+    const result: Record<number, string> = {};
 
-    [ErrorCode.INVALID_PATH]: 'invalidPath',
-    [ErrorCode.INVALID_CONTENT_TYPE]: 'invalidContentType',
-    [ErrorCode.REQUEST_NOT_IN_WHITELIST]: 'requestNotInWhiteList',
+    Object.keys(enumObj).forEach(key => {
+        if (isNaN(Number(key))) {
+            const value = enumObj[key as keyof typeof enumObj];
+            const camelKey = key
+                .toLowerCase()
+                .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+            result[value] = camelKey as ToCamelCase<keyof T & string>;
+        }
+    });
+
+    return result as Record<number, ToCamelCase<keyof T & string>>;
 }

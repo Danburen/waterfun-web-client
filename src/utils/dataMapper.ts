@@ -24,3 +24,11 @@ export async function base64ToText(base64: string) {
     });
     return await new Response(blob).text();
 }
+
+// CamelCase transformer
+export type ToCamelCase<S extends string> =
+    S extends `${infer First}_${infer Rest}`
+        ? `${Lowercase<First>}${Capitalize<ToCamelCase<Rest>>}`
+        : Lowercase<S>;
+
+

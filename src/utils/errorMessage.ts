@@ -1,4 +1,4 @@
-import { ErrorCode, ERROR_CODE_MESSAGE_KEY_MAP } from '~/types/ErrorCodeEnum'
+import { ErrorCode, AUTO_ERROR_CODE_MESSAGE_KEY_MAP } from '~/types/ErrorCodeEnum'
 import { translate } from '~/utils/common'
 import { HttpStatus } from "~/types/ErrorCodeEnum";
 
@@ -13,7 +13,7 @@ export function getErrorMessage(code: ErrorCode | HttpStatus,): string {
         return translate(`message.error.http.${code}`)
     }
 
-    const messageKey = ERROR_CODE_MESSAGE_KEY_MAP[code] || 'unknownError'
+    const messageKey = AUTO_ERROR_CODE_MESSAGE_KEY_MAP[code] || 'unknownError'
     if (messageKey === 'unknownError') {
         return translate('message.error.unknownError') + ` (${code})`
     }

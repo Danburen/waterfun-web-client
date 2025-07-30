@@ -4,7 +4,7 @@ import {resourceApi} from "~/api/resourceApi";
 import { LangMap } from "~/types/BaseType";
 import type { FileResDataType} from "~/types/ResponseDataType";
 import LegalDocument, {type LegalDocPropsType} from "~/components/LegalDocument.vue";
-import { base64ToUint8Array } from "~/utils/dataAdaptor"
+import { base64ToUint8Array } from "~/utils/dataMapper"
 const i18n = useI18n();
 
 const route = useRoute()
