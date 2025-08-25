@@ -5,8 +5,8 @@ import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import type {ElInput} from "../../.nuxt/components";
 import {validateEmail, validatePassword, validatePhoneNumber} from "~/utils/validator";
 import {validateUsername} from "~/utils/validator";
-import useUserStore from "~/stores/userStore";
 import type {RegisterRequest} from "~/types/LoginRequest";
+import {useAuth} from "~/composables/useAuth";
 
 const registerFormRef = ref<FormInstance>()
 
@@ -17,7 +17,7 @@ const expandShow = ref(true);
 const router = useRouter();
 const route = useRoute();
 
-const { register } = useUserStore();
+const { tryRegister } = useAuth();
 
 const registerForm = reactive({
   phone: '',
@@ -35,15 +35,9 @@ const regRules = reactive<FormRules<typeof registerForm>>({
   password:[{validator:validatePassword(true),trigger:"blur"}],
 })
 
-const handleRegister = () => {
+const handleRegisterClick = () => {
   buttonLoad.value = true;
-  register(registerForm as RegisterRequest).then(()=> {
-    ElMessage({
-      message: translate('message.success.registerSuccess'),
-      type: "success",
-    })
-    router.push("/")
-  }).finally(()=> {
+  tryRegister(registerForm as RegisterRequest).finally(()=> {
     buttonLoad.value = false;
   })
 }
@@ -111,7 +105,7 @@ watch(() => route.query.userAgreementConfirm, (val) => {
         </div>
       </el-collapse-transition>
       <el-form-item label-width="auto">
-        <el-button type="primary" class="login-btn" @click="handleRegister" :loading="buttonLoad" :disabled="!licenceCheck">{{ $t('auth.btn.register') }}</el-button>
+        <el-button type="primary" class="login-btn" @click="handleRegisterClick" :loading="buttonLoad" :disabled="!licenceCheck">{{ $t('auth.btn.register') }}</el-button>
         <div class="addition-container">
           <el-checkbox size="small" v-model="licenceCheck">
             {{ $t('confirm.confirmReadLicences')  + ' ' }}

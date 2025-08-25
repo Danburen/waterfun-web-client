@@ -1,68 +1,33 @@
 import { defineStore } from "pinia";
 import type {LoginRequest, RegisterRequest} from "~/types/LoginRequest";
 import { authApi } from "~/api/authApi";
-import {ElMessage} from "element-plus";
 import type {LoginResponseDataType} from "~/api/types/LoginResponseType";
+import {accountApi} from "~/api/accountApi";
+import {useSessionStorage} from "@vueuse/core";
 
 interface UserData{
     userId: number | null,
     username: string,
-    expireIn: number,
-    lastLoginTime: number,
+    nickname: string,
+    avatar: string,
 }
 
-const useUserStore = defineStore('userStore',()=>{
+export const useUserStore = defineStore('userStore',()=>{
     const userData = ref<UserData>({
         userId: null,
         username: '',
-        expireIn: 0,
-        lastLoginTime: 0,
+        nickname: '',
+        avatar: '',
     })
 
-    const isLoginIn = computed(()=>{
-        return userData.value.userId && Date.now() < (userData.value.lastLoginTime + userData.value.expireIn * 1000)
-    })
-
-    const login = (loginRequest: LoginRequest) =>
-        authApi.login(loginRequest).then(response => {
-            userData.value = {
-                userId: response.data.userId,
-                username: response.data.username,
-                expireIn: response.data.expireIn,
-                lastLoginTime: Date.now(),
-            }
-            return response
-        })
-
-    const register = (registerRequest: RegisterRequest) =>
-        authApi.register(registerRequest).then(response => {
-            userData.value = {
-                userId: response.data.userId,
-                username: response.data.username,
-                expireIn: response.data.expireIn,
-                lastLoginTime: Date.now(),
-            }
-            return response
-        })
-
-    const logout = () => {
-        return authApi.logout().then(() => {
-            userData.value.userId = null
-            userData.value.username = ''
-            userData.value.expireIn = 0
-            userData.value.lastLoginTime = 0
-        })
+    const updateUserData = (data: Partial<UserData>) => {
+        userData.value = {...userData.value, ...data}
     }
+    const clearUserData = () => {
+        userData.value = { userId: null, username: '', nickname: '', avatar: '' };
+    };
 
-    return{
-        userData,
-        isLoginIn,
-        logout,
-        login,
-        register,
-    }
+    return { userData, updateUserData, clearUserData };
 },{
     persist: true
 });
-
-export default useUserStore;

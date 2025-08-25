@@ -1,6 +1,7 @@
 
 interface BaseLoginRequest{
     username: string,
+    deviceFp: string,
     loginType: LoginType,
 }
 
@@ -8,6 +9,7 @@ interface BasicRegisterRequest{
     phone: string,
     username: string,
     smsCode: string,
+    deviceFp: string,
 }
 
 interface FullRegisterRequest extends BasicRegisterRequest{

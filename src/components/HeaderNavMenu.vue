@@ -2,12 +2,11 @@
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {Bell, Message, Search} from '@element-plus/icons-vue'
-import useUserStore from "~/stores/userStore";
+import {useAuth} from "~/composables/useAuth";
+import {useUserStore} from "~/stores/userStore";
 
-const userStore = useUserStore();
-const isLoggedIn = computed(()=> userStore.isLoginIn)
-const { userData } = useUserStore()
-
+const { isLoggedIn, logout } = useAuth()
+const userData = useUserStore().userData
 const router = useRouter()
 const searchQuery = ref('')
 const unreadNOTICount = ref(5)
@@ -34,7 +33,7 @@ const handleMessage = () => {
 }
 
 const handleLogout = () => {
-  userStore.logout().then(() => {
+  logout().then(() => {
     ElMessage({
       message: translate('message.success.logoutSuccess'),
       type: 'success'
@@ -63,14 +62,14 @@ const handleLogin = ()=>{
 
 onMounted(()=>{
   console.log(userData)
-  console.log(userStore.isLoginIn)
+  console.log(isLoggedIn)
 })
 </script>
 
 
 <template>
   <div class="header-container">
-    <el-header class="app-header">
+    <el-header class="app-header items-center">
       <!-- 左侧Logo和文字 -->
       <div class="header-left">
         <div class="logo-container">
@@ -140,7 +139,7 @@ onMounted(()=>{
             trigger="hover"
             placement="bottom"
             @command="handleCommand"
-            class="menu-item user-dropdown"
+            class="menu-item items-center user-dropdown"
         >
           <div class="user-profile">
             <el-button link class="user-btn" @click="handleLogin">
@@ -188,9 +187,9 @@ onMounted(()=>{
 
 <style scoped>
 .header-container {
+  justify-content: space-between !important;
   width: 100%;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  position:fixed;
   top: 0;
   z-index: 1000;
 }
@@ -205,9 +204,6 @@ onMounted(()=>{
   border-bottom: 1px solid #e6e6e6;
 }
 .menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin: 0 10px;
   text-decoration: none;
   color: #333;

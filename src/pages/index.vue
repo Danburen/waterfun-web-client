@@ -1,5 +1,15 @@
 <script setup lang="ts">
+import { onBeforeMount } from "vue";
 
+
+const useStore = useUserStore();
+const checkLoginStatus = ()=>{
+
+}
+
+onBeforeMount(() => {
+
+})
 </script>
 
 <template>

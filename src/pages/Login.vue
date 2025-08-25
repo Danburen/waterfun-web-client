@@ -8,14 +8,15 @@ import AuthBox from "~/components/auth/AuthBox.vue";
 import type {LoginRequest, LoginType} from '@/types/LoginRequest'
 import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/validator";
 import type {ElInput} from "../../.nuxt/components";
-import useUserStore from "~/stores/userStore";
 import {authApi} from "~/api/authApi";
+import {useAuth} from "~/composables/useAuth";
 
 type LoginTabType = 'password'|'fast-auth';
 
 const i18n = useI18n();
 const router = useRouter();
-const { login } = useUserStore();
+
+const { tryLogin } = useAuth()
 
 const passAuthForm = ref<FormInstance>();
 const fastAuthForm = ref<FormInstance>();
@@ -58,18 +59,23 @@ const resetForm = (passAuthForm: FormInstance | undefined,fastAuthForm: FormInst
   fastAuthForm.resetFields();
 }
 
-const buildRequest= ():LoginRequest =>{
-  if(loginTab.value === "password"){
-    return passLoginForm as LoginRequest;
-  }else{
+const buildRequest= async (): Promise<LoginRequest> => {
+  const dfp =  await generateFingerprint();
+  if (loginTab.value === "password") {
+    return {
+      ...passLoginForm,
+      deviceFp: dfp
+    } as LoginRequest;
+  } else {
     return {
       username: fastLoginForm.username,
       loginType: fastLoginForm.loginType,
       ...(fastLoginForm.loginType === 'sms'
-              ? { smsCode: fastLoginForm.verifyCode }
-              : { emailCode: fastLoginForm.verifyCode }
+              ? {smsCode: fastLoginForm.verifyCode}
+              : {emailCode: fastLoginForm.verifyCode}
       ),
-    }as LoginRequest;
+      deviceFp: dfp
+    } as LoginRequest;
   }
 }
 
@@ -78,20 +84,20 @@ const submitForm = (form:FormInstance | undefined) => {
   form.validate((valid)=>{
     buttonLoad.value = true;
     if(valid){
-      login(buildRequest()).then(()=>{
-        ElMessage({
-          message: translate("message.success.loginSuccess"),
-          type: "success",
+      buildRequest().then(async (loginRes)=>{
+        console.log(loginRes.deviceFp);
+        return tryLogin(loginRes).catch(err=>{
+          console.log(err);
+          switch (err.code) {
+            case 40004:
+            case 40006:
+            case 40007: refreshCaptcha();break;
+          }
+        }).finally(()=>{
+          buttonLoad.value = false;
         })
-        router.push('/');
       }).catch(err=>{
-        switch (err.data.code) {
-          case 40004:
-          case 40006:
-          case 40007: refreshCaptcha();break;
-        }
-      }).finally(()=>{
-        buttonLoad.value = false;
+        console.log(err)
       })
     }else{
       console.error('error occurred when submit form');

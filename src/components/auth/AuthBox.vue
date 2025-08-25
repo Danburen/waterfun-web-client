@@ -29,9 +29,7 @@
   justify-content: center;
   align-items: center;
 }
-:deep(.el-card) {
 
-}
 /*@Departed*/
 .auth-container {
   display: flex;

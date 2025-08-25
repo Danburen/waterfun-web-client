@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import {fileURLToPath} from "node:url";
-
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
@@ -10,11 +9,11 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE
     }
   },
-  nitro: {
-    routeRules: {
-      '/auth/**': { proxy: process.env.NUXT_PUBLIC_API_BASE + "/auth/" }
-    }
-  },
+  // nitro: {
+  //   routeRules: {
+  //     '/auth/**': { proxy: process.env.NUXT_PUBLIC_API_BASE + "/auth/" }
+  //   }
+  // },
   alias:{
     '@': fileURLToPath(new URL('./src', import.meta.url)),
     '~': fileURLToPath(new URL('./src', import.meta.url))
@@ -35,12 +34,8 @@ export default defineNuxtConfig({
     ],
     lazy: true,
     langDir: 'locales',
-  },
-
-
-  // typescript: {
-  //   tsConfig: {
-  //     extends: './tsconfig.json'
-  //   }
-  // }
+    bundle: {
+      optimizeTranslationDirective: false // 显式禁用
+    },
+  }
 })
