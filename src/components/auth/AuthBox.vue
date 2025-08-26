@@ -6,7 +6,7 @@
   <div class="container">
     <el-card class="auth-box" shadow="always">
       <div class="logo">
-        <img src="@/assets/logo.png" width="40px" height="40px" alt="WaterFun">
+        <img src="@/assets/logo.svg" width="40px" height="40px" alt="WaterFun">
         <span style="margin-left: 1em">WaterFun</span>
       </div>
       <div class="slot-container">

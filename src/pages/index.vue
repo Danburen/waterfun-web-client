@@ -13,10 +13,14 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div>
-    <HeaderNavMenu></HeaderNavMenu>
-    <h1>HelloWorld</h1>
-    <p>Nuxtjs</p>
+  <div class="header">
+    <header-nav-menu></header-nav-menu>
+  </div>
+  <div class="container">
+    <el-carousel-item></el-carousel-item>
+  </div>
+  <div class="footer">
+
   </div>
 </template>
 

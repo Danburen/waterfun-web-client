@@ -16,7 +16,13 @@ const userName = ref(userData.username)
 const userEmail = ref('zhangsan@example.com')
 const userAvatar = ref('https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png')
 
-
+const navItems = {
+  home: '/home',
+  community: '/community',
+  playground: '/playground',
+  chatroom: '/chatroom',
+  about: '/about',
+}
 
 const handleSearch = () => {
   console.log('搜索内容:', searchQuery.value)
@@ -62,7 +68,7 @@ const handleLogin = ()=>{
 
 onMounted(()=>{
   console.log(userData)
-  console.log(isLoggedIn)
+  console.log(isLoggedIn.value)
 })
 </script>
 
@@ -70,21 +76,14 @@ onMounted(()=>{
 <template>
   <div class="header-container">
     <el-header class="app-header items-center">
-      <!-- 左侧Logo和文字 -->
       <div class="header-left">
         <div class="logo-container">
-          <img src="@/assets/logo.png" alt="Logo" class="logo" />
+          <img src="@/assets/logo.svg" alt="Logo" class="logo" />
           <a class="logo-text menu-item" @click="router.push('/')">WaterFun</a>
         </div>
-        <a class="menu-item" @click="router.push('/community')">
-          {{ $t('navbar.community') }}
-        </a>
-        <a class="menu-item" @click="router.push('/resource')">
-          {{ $t('navbar.resource') }}
-        </a>
+        <a v-for="(key,value) in navItems" :key="key" :href="`${value}`" class="menu-item">{{ $t(`navbar.${value}`) }}</a>
       </div>
 
-      <!-- 中部搜索框和搜索按钮 -->
       <div class="header-center">
         <el-input
             v-model="searchQuery"

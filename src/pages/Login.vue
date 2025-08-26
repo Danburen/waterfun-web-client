@@ -86,7 +86,9 @@ const submitForm = (form:FormInstance | undefined) => {
     if(valid){
       buildRequest().then(async (loginRes)=>{
         console.log(loginRes.deviceFp);
-        return tryLogin(loginRes).catch(err=>{
+        return tryLogin(loginRes).then(()=>{
+          router.push("/")
+        }).catch(err=>{
           console.log(err);
           switch (err.code) {
             case 40004:

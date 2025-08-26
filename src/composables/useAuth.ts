@@ -49,7 +49,8 @@ export const useAuth = () => {
     }
 
     const logout = async () => {
-        return authApi.logout().then(() => {
+        const dfp = await generateFingerprint()
+        return authApi.logout(dfp).then(() => {
             userStore.clearUserData()
             authStore.cleanToken()
         })
@@ -57,7 +58,7 @@ export const useAuth = () => {
 
     const isLoggedIn = computed(()=>{
         const expireIn = Number(authStore.accessData.expire);
-        return userStore.userData.userId && Date.now() < expireIn;
+        return userStore.userData.userId !== null && (Date.now() < expireIn);
     })
 
     return { tryLogin, tryRegister, logout, isLoggedIn }

@@ -1,11 +1,10 @@
 {
   "navbar": {
     "home": "首页",
-    "community": "社区广场",
-    "wiki": "百科",
-    "resource": "资源中心",
-    "miniGames": "小游戏",
-    "blog": "博客",
+    "community": "社区",
+    "playground": "游乐场",
+    "chatroom": "聊天室",
+    "about": "关于",
     "message": "消息",
     "userInfo": "个人信息",
     "settings": "设置",

@@ -40,8 +40,8 @@ export const authApi = {
             : this.sendEmailCode(sendCodeData);
     },
 
-    logout() {
-        return request.post('/auth/logout');
+    logout(deviceFp: string) {
+        return request.post('/auth/logout', deviceFp);
     },
 
     getCsrfToken() {
