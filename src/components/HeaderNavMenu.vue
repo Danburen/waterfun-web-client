@@ -76,10 +76,11 @@ onMounted(()=>{
 <template>
   <div class="header-container">
     <el-header class="app-header items-center">
-      <div class="header-left">
-        <div class="logo-container">
-          <img src="@/assets/logo.svg" alt="Logo" class="logo" />
-          <a class="logo-text menu-item" @click="router.push('/')">WaterFun</a>
+      <div class="align-center">
+        <div class="align-center">
+          <img style="width: 32px; height: 32px; margin-right: 10px;" src="@/assets/logo.svg" alt="Logo" class="logo" />
+          <a style="font-size: 18px; font-weight: bold; color: #333;"
+             class="logo-text menu-item" @click="router.push('/')">WaterFun</a>
         </div>
         <a v-for="(key,value) in navItems" :key="key" :href="`${value}`" class="menu-item">{{ $t(`navbar.${value}`) }}</a>
       </div>
@@ -98,7 +99,7 @@ onMounted(()=>{
       </div>
 
       <!-- 右侧个人信息区域 -->
-      <div class="header-right">
+      <div class="align-center">
         <!-- 订阅消息按钮 -->
         <div class="menu-item-small">
           <el-badge
@@ -202,6 +203,7 @@ onMounted(()=>{
   background-color: #fff;
   border-bottom: 1px solid #e6e6e6;
 }
+
 .menu-item {
   margin: 0 10px;
   text-decoration: none;
@@ -217,28 +219,7 @@ a:hover {
   cursor: pointer;
 }
 
-/* 左侧Logo和文字样式 */
-.header-left {
-  display: flex;
-  align-items: center;
-}
 
-.logo-container {
-  display: flex;
-  align-items: center;
-}
-
-.logo-container .logo {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
-}
-
-.logo-container .logo-text {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-}
 .logo-container .logo-text:hover {
   color: #66b1ff;
   cursor: pointer;
@@ -261,11 +242,6 @@ a:hover {
   border-color: #66b1ff;
 }
 
-/* 右侧个人信息样式 */
-.header-right {
-  display: flex;
-  align-items: center;
-}
 
 .reminder-btn {
   font-size: 18px;

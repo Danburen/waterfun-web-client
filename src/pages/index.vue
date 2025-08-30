@@ -17,7 +17,7 @@ onBeforeMount(() => {
     <header-nav-menu></header-nav-menu>
   </div>
   <div class="container">
-    <el-carousel-item></el-carousel-item>
+
   </div>
   <div class="footer">
 
