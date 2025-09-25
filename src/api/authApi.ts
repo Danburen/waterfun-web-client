@@ -1,7 +1,7 @@
-import type {LoginRequest, RegisterRequest} from "~/types/LoginRequest";
 import request from "~/utils/requests/axiosRequest"
-import type {SendCodeType} from "~/types/BaseType";
-import type {LoginResponseDataType} from "~/api/types/LoginResponseType";
+
+import type {LoginResponseDataType} from "~/api/types";
+import type {LoginRequest, RegisterRequest, SendCodeType} from "~/types/api/auth";
 
 export const authApi = {
     login(loginRequest: LoginRequest):Promise<LoginResponseDataType> {
@@ -22,7 +22,7 @@ export const authApi = {
     getCaptcha():Promise<ArrayBuffer> {
         return request.get('/auth/captcha', {
             responseType: 'arraybuffer',
-            meta: { needsCSRF: false }
+            meta: { needCSRF: false }
         });
     },
 

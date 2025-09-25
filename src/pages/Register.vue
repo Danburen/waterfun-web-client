@@ -5,8 +5,8 @@ import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import type {ElInput} from "../../.nuxt/components";
 import {validateEmail, validatePassword, validatePhoneNumber} from "~/utils/validator";
 import {validateUsername} from "~/utils/validator";
-import type {RegisterRequest} from "~/types/LoginRequest";
 import {useAuth} from "~/composables/useAuth";
+import type {RegisterRequest} from "~/types/api/auth";
 
 const registerFormRef = ref<FormInstance>()
 

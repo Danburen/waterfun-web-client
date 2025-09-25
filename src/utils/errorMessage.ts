@@ -1,6 +1,6 @@
-import { ErrorCode, AUTO_ERROR_CODE_MESSAGE_KEY_MAP } from '~/types/ErrorCodeEnum'
-import { translate } from '~/utils/common'
-import { HttpStatus } from "~/types/ErrorCodeEnum";
+import { ErrorCode, AUTO_ERROR_CODE_MESSAGE_KEY_MAP } from '~/utils/ErrorCodeEnum'
+import { translate } from '~/utils/cachePool'
+import { HttpStatus } from "~/utils/ErrorCodeEnum";
 
 /**
  * get the error code translate message
@@ -23,18 +23,4 @@ export function getErrorMessage(code: ErrorCode | HttpStatus,): string {
     }
 
     return translate(`message.error.badRequest.${messageKey}`)
-}
-
-export function isAuthError(code: ErrorCode): boolean {
-    return code >= 40100 && code <= 40199
-}
-
-export function isClientError(code: ErrorCode | HttpStatus): boolean {
-    return (code >= 40000 && code <= 49999) ||
-        (code >= 400 && code <= 499)
-}
-
-export function isServerError(code: ErrorCode | HttpStatus): boolean {
-    return (code >= 50000 && code <= 59999) ||
-        (code >= 500 && code <= 599)
 }

@@ -1,10 +1,10 @@
 import { useUserStore } from "~/stores/userStore";
 import { useAuthStore } from "~/stores/authStore";
-import type {LoginResponseDataType} from "~/api/types/LoginResponseType";
 import {accountApi} from "~/api/accountApi";
 import {authApi} from "~/api/authApi";
-import type {LoginRequest, RegisterRequest} from "~/types/LoginRequest";
 import {ElMessage} from "element-plus";
+import type {LoginResponseDataType} from "~/api/types";
+import type {LoginRequest, RegisterRequest} from "~/types/api/auth";
 export const useAuth = () => {
     const authStore = useAuthStore();
     const userStore = useUserStore();
@@ -52,7 +52,7 @@ export const useAuth = () => {
         const dfp = await generateFingerprint()
         return authApi.logout(dfp).then(() => {
             userStore.clearUserData()
-            authStore.cleanToken()
+            authStore.removeToken()
         })
     }
 

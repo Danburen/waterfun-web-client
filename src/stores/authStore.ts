@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('accessStore', ()=>{
         }
     }
 
-    const clearToken = () => {
+    const removeToken = () => {
         accessData.value = {
             token: '',
             expire: 0,
@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('accessStore', ()=>{
 
     return {
         setToken,
-        cleanToken: clearToken,
+        removeToken,
         accessData,
         isValid,
     }

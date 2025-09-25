@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { ElMessage } from "element-plus";
-import { translate } from "~/utils/common";
+import { translate } from "~/utils/cachePool";
 import {getErrorMessage} from "~/utils/errorMessage";
 import {useAuthStore} from "~/stores/authStore";
 
 declare module 'axios' {
     interface AxiosRequestConfig {
         meta?: {
-            needsCSRF?: boolean;
+            needCSRF?: boolean;
             showError?: boolean;
             needAuth?: boolean;
         };
@@ -26,7 +26,7 @@ service.interceptors.request.use(
     async config => {
         const isAuthSkip = AUTH_SKIP_LIST.some((path: string) => config.url?.includes(path));
         const isCsrfSkip = CSRF_SKIP_LIST.some((path: string) => config.url?.includes(path));
-        const needCSRF = config.meta?.needsCSRF !== false && !isCsrfSkip;
+        const needCSRF = config.meta?.needCSRF !== false && !isCsrfSkip;
         const needAuth = config.meta?.needAuth !== false && !isAuthSkip;
 
         const token = useAuthStore().accessData.token;

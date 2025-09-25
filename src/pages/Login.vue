@@ -5,11 +5,11 @@ import {ElMessage, type FormInstance, type FormRules} from "element-plus";
 import {deBounce, throttle} from "~/utils/triggerControl"
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import AuthBox from "~/components/auth/AuthBox.vue";
-import type {LoginRequest, LoginType} from '@/types/LoginRequest'
 import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/validator";
 import type {ElInput} from "../../.nuxt/components";
 import {authApi} from "~/api/authApi";
 import {useAuth} from "~/composables/useAuth";
+import type {LoginRequest, LoginType} from "~/types/api/auth";
 
 type LoginTabType = 'password'|'fast-auth';
 

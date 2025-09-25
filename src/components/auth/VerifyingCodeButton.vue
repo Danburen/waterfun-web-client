@@ -2,8 +2,8 @@
 import request from "~/utils/requests/axiosRequest";
 import {ElMessage} from "element-plus";
 import {useI18n} from 'vue-i18n';
-import type {SendCodeType} from "~/types/BaseType";
 import { authApi } from "~/api/authApi";
+import type {SendCodeType} from "~/types/api/auth";
 
 const i18n = useI18n();
 

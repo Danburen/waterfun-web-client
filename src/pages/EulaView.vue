@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
 import {resourceApi} from "~/api/resourceApi";
-import { LangMap } from "~/types/BaseType";
-import type { FileResDataType} from "~/types/ResponseDataType";
 import LegalDocument, {type LegalDocPropsType} from "~/components/LegalDocument.vue";
 import { base64ToUint8Array } from "~/utils/dataMapper"
+import type {FileResDataType} from "~/types/api/response";
+import {LangMap} from "~/types/sys/lang";
 const i18n = useI18n();
 
 const route = useRoute()
