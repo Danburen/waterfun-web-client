@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from "element-plus";
-import { translate } from "~/utils/cachePool";
+import { translate } from "@/utils/translator";
 import {getErrorMessage} from "~/utils/errorMessage";
 import {useAuthStore} from "~/stores/authStore";
 

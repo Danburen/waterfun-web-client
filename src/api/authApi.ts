@@ -1,7 +1,7 @@
 import request from "~/utils/requests/axiosRequest"
 
-import type {LoginResponseDataType} from "~/api/types";
 import type {LoginRequest, RegisterRequest, SendCodeType} from "~/types/api/auth";
+import type {LoginResponseDataType} from "~/types";
 
 export const authApi = {
     login(loginRequest: LoginRequest):Promise<LoginResponseDataType> {

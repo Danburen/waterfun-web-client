@@ -1,5 +1,5 @@
 import { ErrorCode, AUTO_ERROR_CODE_MESSAGE_KEY_MAP } from '~/utils/ErrorCodeEnum'
-import { translate } from '~/utils/cachePool'
+import { translate } from '@/utils/translator'
 import { HttpStatus } from "~/utils/ErrorCodeEnum";
 
 /**

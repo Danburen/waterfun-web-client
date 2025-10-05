@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "@waterfun/web-client",
   "private": true,
   "type": "module",
   "scripts": {
@@ -19,7 +19,8 @@
     "pinia-plugin-persistedstate": "^4.3.0",
     "vee-validate": "^4.15.0",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "@waterfun/web-core": "workspace:*"
   },
   "devDependencies": {
     "sass": "^1.89.2",

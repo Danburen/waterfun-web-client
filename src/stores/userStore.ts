@@ -1,9 +1,4 @@
 import { defineStore } from "pinia";
-import { authApi } from "~/api/authApi";
-import {accountApi} from "~/api/accountApi";
-import {useSessionStorage} from "@vueuse/core";
-import type {LoginResponseDataType} from "~/api/types";
-import type {LoginRequest, RegisterRequest} from "~/types/api/auth";
 
 interface UserData{
     userId: number | null,

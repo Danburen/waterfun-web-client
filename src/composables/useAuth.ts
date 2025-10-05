@@ -3,8 +3,8 @@ import { useAuthStore } from "~/stores/authStore";
 import {accountApi} from "~/api/accountApi";
 import {authApi} from "~/api/authApi";
 import {ElMessage} from "element-plus";
-import type {LoginResponseDataType} from "~/api/types";
 import type {LoginRequest, RegisterRequest} from "~/types/api/auth";
+import type {LoginResponseDataType} from "~/types";
 export const useAuth = () => {
     const authStore = useAuthStore();
     const userStore = useUserStore();
