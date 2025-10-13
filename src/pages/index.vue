@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount } from "vue";
+import {useUserStore} from "~/stores/userStore";
 
 
 const useStore = useUserStore();

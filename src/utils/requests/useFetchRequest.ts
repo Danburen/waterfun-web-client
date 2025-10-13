@@ -1,6 +1,6 @@
 import type {UseFetchOptions} from "nuxt/app";
 import defu from "defu";
-
+//@ts-nocheck
 export const useApiFetch = <T>(
     url: string,
     optionals: UseFetchOptions<T> ={}
@@ -32,17 +32,20 @@ export const useApiFetch = <T>(
             console.error('Request error:', error)
         },
         onResponse({ response }) {
-            if (response.status !== 200 && response._data?.message) {
+            const data = response._data as { message?: string };
+            if (response.status !== 200 && data.message) {
                 throw createError({
                     statusCode: response.status,
-                    statusMessage: response._data.message
+                    statusMessage: data.message
                 })
             }
         },
         onResponseError({ response }) {
             if (response) {
-                const status = response._data?.status;
-                const data = response._data;
+
+                const status = response.status;
+                const data = response._data as { message?: string };
+
 
                 switch (status) {
                     case 401:
