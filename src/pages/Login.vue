@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import request from "~/utils/requests/axiosRequest";
+import request from "../utils/axiosRequest";
 import {onBeforeMount, reactive, ref, watch} from "vue";
 import {ElMessage, type FormInstance, type FormRules} from "element-plus";
-import {deBounce, throttle} from "~/utils/triggerControl"
+import {deBounce, throttle} from "@waterfun/web-core/src/triggerControl"
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import AuthBox from "~/components/auth/AuthBox.vue";
 import {validateAuthname, validatePassword, validateVerifyCode} from "~/utils/validator";
 import {authApi} from "~/api/authApi";
 import {useAuth} from "~/composables/useAuth";
-import type {LoginRequest, LoginType} from "~/types/api/auth";
+import type {LoginRequest} from "~/types/api/auth";
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import { generateFingerprint } from "~/utils/fingerprint";
+import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
+import { convertArrayBufferToBase64 } from "@waterfun/web-core/src/dataMapper";
 
 type LoginTabType = 'password'|'fast-auth';
 
@@ -69,13 +70,12 @@ const buildRequest= async (): Promise<LoginRequest> => {
       deviceFp: dfp
     } as LoginRequest;
   } else {
+    const isEmailLogin = fastLoginForm.username.includes('@');
     return {
-      username: fastLoginForm.username,
-      loginType: fastLoginForm.loginType,
-      ...(fastLoginForm.loginType === 'sms'
-              ? {smsCode: fastLoginForm.verifyCode}
-              : {emailCode: fastLoginForm.verifyCode}
-      ),
+      ...(isEmailLogin ?
+          { email: fastLoginForm.username} : { phoneNumber: fastLoginForm.username}),
+      ...(fastLoginForm.loginType === 'sms' ?
+          { smsCode: fastLoginForm.verifyCode} : { emailCode: fastLoginForm.verifyCode}),
       deviceFp: dfp
     } as LoginRequest;
   }
@@ -88,7 +88,7 @@ const submitForm = (form:FormInstance | undefined) => {
     if(valid){
       buildRequest().then(async (loginRes)=>{
         console.log(loginRes.deviceFp);
-        return tryLogin(loginRes).then(()=>{
+        return tryLogin(loginRes, getLoginType()).then(()=>{
           router.push("/")
         }).catch(err=>{
           console.log(err);
@@ -141,6 +141,18 @@ const refreshCaptcha = throttle(()=>{
 onBeforeMount(() => {
   refreshCaptcha();
 });
+
+function getLoginType(){
+  if(loginTab.value === 'password'){
+    return 'password'
+  }else{
+    if(fastLoginForm.username.includes('@')){
+      return 'email'
+    }else{
+      return 'sms'
+    }
+  }
+}
 </script>
 
 <template>

@@ -5,6 +5,7 @@ import {authApi} from "~/api/authApi";
 import {ElMessage} from "element-plus";
 import type {LoginRequest, RegisterRequest} from "~/types/api/auth";
 import type {LoginResponseDataType} from "~/types";
+import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
 export const useAuth = () => {
     const authStore = useAuthStore();
     const userStore = useUserStore();
@@ -23,8 +24,8 @@ export const useAuth = () => {
         })
     }
 
-    const tryLogin = async (loginRequest:LoginRequest) => {
-        const loginRes = await authApi.login(loginRequest);
+    const tryLogin = async (loginRequest:LoginRequest, type: string) => {
+        const loginRes = await authApi.login(loginRequest, type);
         return handleAuthSuccess(loginRes).then(()=>{
             ElMessage({
                 message: translate("message.success.loginSuccess"),

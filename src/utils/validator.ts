@@ -1,10 +1,9 @@
-import {REGEX} from "~/utils/regex";
+import {REGEX} from "@waterfun/web-core/src/regex";
 import {translate} from "@/utils/translator";
-import type {LoginType} from "~/types/api/auth";
 
 const keyPrefix = 'auth.validate.'
 
-export const validateAuthname = (loginType: LoginType) =>{
+export const validateAuthname = (loginType: string) =>{
     return(rule:any,value:any,callback:any)=>{
         if(value === ''){
             callback(new Error(translate(keyPrefix + 'usernameEmpty')));

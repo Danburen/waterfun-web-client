@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import request from "~/utils/requests/axiosRequest";
+import request from "../../utils/axiosRequest";
 import {ElMessage} from "element-plus";
 import {useI18n} from 'vue-i18n';
 import { authApi } from "~/api/authApi";
 import type {SendCodeType} from "~/types/api/auth";
+import { throttle } from "@waterfun/web-core/src/triggerControl";
 
 const i18n = useI18n();
 

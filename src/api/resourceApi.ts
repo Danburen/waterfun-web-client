@@ -1,4 +1,4 @@
-import request from "~/utils/requests/axiosRequest"
+import request from "../utils/axiosRequest"
 
 import type { DataApiResponse, FileResDataType, UserInfoResponse } from "~/types/api/response";
 import type {LanguageTypes} from "~/types/sys/lang";

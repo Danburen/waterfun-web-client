@@ -1,4 +1,4 @@
-import request from "~/utils/requests/axiosRequest";
+import request from "../utils/axiosRequest";
 import type {DataApiResponse, UserInfoResponse} from "~/types/api/response";
 
 export const accountApi = {

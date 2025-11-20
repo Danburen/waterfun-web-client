@@ -5,6 +5,6 @@
       "~/*": ["./src/*"],
       "@/*": ["./src/*"]
     },
-    "types": ["./src/types","./types/vue.d.ts"]
+    "types": ["./src/types","./env"]
   },
 }

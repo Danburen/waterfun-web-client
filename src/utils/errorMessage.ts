@@ -1,6 +1,6 @@
-import { ErrorCode, AUTO_ERROR_CODE_MESSAGE_KEY_MAP } from '~/utils/ErrorCodeEnum'
+import { ErrorCode, AUTO_ERROR_CODE_MESSAGE_KEY_MAP } from '@waterfun/web-core/src/ErrorCodeEnum'
+import { HttpStatus } from "@waterfun/web-core/src/ErrorCodeEnum";
 import { translate } from '@/utils/translator'
-import { HttpStatus } from "~/utils/ErrorCodeEnum";
 
 /**
  * get the error code translate message

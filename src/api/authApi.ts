@@ -1,17 +1,17 @@
-import request from "~/utils/requests/axiosRequest"
+import request from "../utils/axiosRequest"
 
 import type {LoginRequest, RegisterRequest, SendCodeType} from "~/types/api/auth";
 import type {LoginResponseDataType} from "~/types";
 
 export const authApi = {
-    login(loginRequest: LoginRequest):Promise<LoginResponseDataType> {
+    login(loginRequest: LoginRequest, type: string):Promise<LoginResponseDataType> {
         const baseUrl = '/auth/login';
-        switch (loginRequest.loginType) {
+        switch (type) {
             case "email": return request.post(`${baseUrl}/email`, loginRequest);
             case "sms": return request.post(`${baseUrl}/sms`, loginRequest);
             case "password": return request.post(`${baseUrl}/password`, loginRequest);
             default:
-                throw new Error("Invalid login type");
+                throw new Error("Invalid login type: " +  type);
         }
     },
 

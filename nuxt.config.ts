@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   // },
   alias:{
     '@': fileURLToPath(new URL('./src', import.meta.url)),
-    '~': fileURLToPath(new URL('./src', import.meta.url))
+    '~': fileURLToPath(new URL('./src', import.meta.url)),
   },
   modules:['@nuxtjs/i18n',
     ['@element-plus/nuxt',{importStyle: 'css', themes: ['dark']}],
@@ -37,5 +37,5 @@ export default defineNuxtConfig({
     bundle: {
       optimizeTranslationDirective: false // 显式禁用
     },
-  }
+  },
 })

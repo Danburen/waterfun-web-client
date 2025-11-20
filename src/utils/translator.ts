@@ -40,6 +40,4 @@ export function translate(key: string, options?: { args?: Record<string, any>; d
     return translatorInstance.translate(key, options);
 }
 
-export default function useI18n() {
-
-}
+export default function useI18n() {}
