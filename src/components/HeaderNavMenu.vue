@@ -1,20 +1,32 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {ref, computed, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
 import {Bell, Message, Search} from '@element-plus/icons-vue'
-import {useAuth} from "~/composables/useAuth";
-import {useUserStore} from "~/stores/userStore";
+import {ElMessage} from 'element-plus';
+import {useAuth} from "~/composables/useAuth"
+import {useUserInfoStore} from "~/stores/UserInfoStore"
+import {useUserProfileStore} from "~/stores/UserProfileStore"
+import {translate} from "~/utils/translator";
 
 const { isLoggedIn, logout } = useAuth()
-const userData = useUserStore().userData
+const userInfoStore = useUserInfoStore();
+const userProfileStore = useUserProfileStore();
 const router = useRouter()
 const searchQuery = ref('')
 const unreadNOTICount = ref(5)
 const unreadMSGCount = ref(5)
 
-const userName = ref(userData.username)
+// 直接从新存储获取用户名
+const userName = computed(() => {
+  return userInfoStore.userInfo.username || '未登录';
+});
+
+// 直接从新存储获取头像
+const userAvatar = computed(() => {
+  return userProfileStore.userProfile.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
+});
+
 const userEmail = ref('zhangsan@example.com')
-const userAvatar = ref('https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png')
 
 const navItems = {
   home: '/home',
@@ -67,8 +79,9 @@ const handleLogin = ()=>{
 }
 
 onMounted(()=>{
-  console.log(userData)
-  console.log(isLoggedIn.value)
+  console.log('用户基本信息:', userInfoStore.userInfo);
+  console.log('用户个人资料:', userProfileStore.userProfile);
+  console.log('登录状态:', isLoggedIn.value);
 })
 </script>
 

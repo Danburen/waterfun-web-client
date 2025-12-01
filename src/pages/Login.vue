@@ -65,11 +65,13 @@ const resetForm = (passAuthForm: FormInstance | undefined,fastAuthForm: FormInst
 const buildRequest= async (): Promise<LoginRequest> => {
   const dfp =  await generateFingerprint();
   if (loginTab.value === "password") {
+    const { loginType, ...passFormData } = passLoginForm;
     return {
-      ...passLoginForm,
+      ...passFormData,
       deviceFp: dfp
     } as LoginRequest;
   } else {
+    const { loginType, ...fastFormData } = fastLoginForm;
     const isEmailLogin = fastLoginForm.username.includes('@');
     return {
       ...(isEmailLogin ?

@@ -138,7 +138,8 @@
       "loginSuccess": "登录成功",
       "registerSuccess": "注册成功",
       "verificationCodeSent": "验证码已发送,请注意查收",
-      "logoutSuccess": "登出成功"
+      "logoutSuccess": "登出成功",
+      "updateSuccess": "更新成功"
     },
     "tooltip": {
       "optionalField": "以下区域的内容是选填字段，可选填充或不填。"

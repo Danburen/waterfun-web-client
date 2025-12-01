@@ -18,10 +18,17 @@ export interface FileResDataType {
 }
 
 export interface UserInfoResponse {
+    uid: string;
     username: string;
+    accountStatus: string;
+    createdAt: string;
+}
+
+export interface UserProfileResponse{
     nickname: string;
     avatar: string;
-    userId: number;
+    bio: string;
+    gender: string;
 }
 
 export interface UserDataResponse {
@@ -30,3 +37,15 @@ export interface UserDataResponse {
 }
 
 export type LoginResponseDataType = DataApiResponse<UserDataResponse>;
+
+// 头像上传策略响应类型
+export interface AvatarUploadPolicyResponse {
+    key: string;
+    url: string;
+    method: string;
+}
+
+// 云资源预览响应类型
+export interface CloudResourceViewResp {
+    previewUrl: string;
+}
