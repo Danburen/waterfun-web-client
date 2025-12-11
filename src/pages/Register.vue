@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {InfoFilled} from '@element-plus/icons-vue'
 import {type FormInstance, type FormRules} from "element-plus";
 import VerifyingCodeButton from "~/components/auth/VerifyingCodeButton.vue";
 import type {ElInput} from "../../.nuxt/components";
 import {validateEmail, validatePassword, validatePhoneNumber} from "~/utils/validator";
 import {validateUsername} from "~/utils/validator";
 import {useAuth} from "~/composables/useAuth";
+import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
 import type {RegisterRequest} from "~/types/api/auth";
 
 const registerFormRef = ref<FormInstance>()
@@ -35,9 +35,19 @@ const regRules = reactive<FormRules<typeof registerForm>>({
   password:[{validator:validatePassword(true),trigger:"blur"}],
 })
 
-const handleRegisterClick = () => {
+const handleRegisterClick = async () => {
   buttonLoad.value = true;
-  tryRegister(registerForm as RegisterRequest).finally(()=> {
+  const dfp =  await generateFingerprint();
+  tryRegister({ 
+    ...registerForm,
+      verify: {
+        target: registerForm.phone,
+        code: registerForm.smsCode,
+        channel: 'sms',
+        scene: 'register',
+        deviceFp: dfp
+      },
+    } as RegisterRequest).finally(()=> {
     buttonLoad.value = false;
   })
 }
@@ -75,14 +85,18 @@ watch(() => route.query.userAgreementConfirm, (val) => {
             :placeholder="$t('auth.placeholder.verifyCode')"
             class="login-input">
           <template #append>
-            <VerifyingCodeButton :username="registerForm.phone" :getType="registerForm.phone ? 'sms' : 'email'" :codePurpose="'register'"></VerifyingCodeButton>
+            <VerifyingCodeButton 
+                :username="registerForm.phone" 
+                :getType="registerForm.phone ? 'sms' : 'email'" 
+                :scene="'register'" 
+            />
           </template>
         </el-input>
       </el-form-item>
       <!-- 补充信息 -->
       <el-form-item class="supplementary-info-container">
         <el-text tag="b">{{ $t('auth.supplementaryInfo') }}</el-text>
-        <el-tooltip :content="$t('message.tooltip.optionalField')" placement="right"><el-link underline="never" :icon="InfoFilled"></el-link></el-tooltip>
+        <el-tooltip :content="$t('message.tooltip.optionalField')" placement="right"><el-link underline="never" :icon="'InfoFilled'"></el-link></el-tooltip>
         <el-link underline="never" href="" @click.prevent="expandShow = !expandShow" class="expand-btn">
             {{ expandShow ? $t('auth.btn.collapse') : $t('auth.btn.expand') }}</el-link>
       </el-form-item>

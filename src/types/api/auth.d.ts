@@ -1,12 +1,11 @@
 interface BaseLoginRequest {
-    username: string,
     deviceFp: string,
 }
 
 interface BasicRegisterRequest {
     phone: string,
     smsCode: string,
-    deviceFp: string,
+    verify: VerifyCodeDto
 }
 
 interface FullRegisterRequest extends BasicRegisterRequest {
@@ -18,30 +17,29 @@ interface PasswordLoginRequest extends BaseLoginRequest {
     username: string;
     password: string;
     captcha: string;
-    smsCode?: never;
-    emailCode?: never;
 }
 
-interface SmsLoginRequest extends BaseLoginRequest {
-    phoneNumber: string;
-    smsCode: string;
-    password?: string;
-    captcha?: never;
-    emailCode?: never;
+interface CodeLoginRequest extends BaseLoginRequest, VerifyCodeDto {
+    scene: 'login'
 }
 
-interface EmailLoginRequest extends BaseLoginRequest {
-    email: string;
-    emailCode: string;
-    password?: never;
-    captcha?: never;
-    smsCode?: never;
+interface VerifyCodeDto {
+    target: string,
+    code: string,
+    channel: 'sms' | 'email',
+    scene: VerifyScene,
+    deviceFp?: string,
 }
 
-export type LoginRequest = PasswordLoginRequest | EmailLoginRequest | SmsLoginRequest;
+export type LoginRequest = PasswordLoginRequest | CodeLoginRequest;
 export type RegisterRequest = BasicRegisterRequest | FullRegisterRequest;
+
+export type VerifyScene = 'login' | 'register' | 'reset-password' | 'set-password' |
+    'change-email' | 'change-phone' | 'verify' ;
+
 export type SendCodeType = {
-    phoneNumber?: string;
-    email?: string;
-    purpose: 'login' | 'register' | 'resetPassword'
+    target: string,
+    channel: 'sms' | 'email',
+    scene: VerifyScene,
+    deviceFp?: string,
 }

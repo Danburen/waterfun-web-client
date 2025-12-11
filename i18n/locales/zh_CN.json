@@ -11,8 +11,13 @@
     "reminder": "订阅"
   },
   "user": {
-    "info": "个人信息",
-    "nickname": "用户昵称"
+    "profile": {
+      "info": "{nickname} 的个人信息",
+      "account": "账号安全",
+      "notification": "通知与隐私",
+      "location": "所在地",
+      "residence": "居住地"
+    }
   },
   "info": {
     "lastUpdateTime": "最后更新于 {year} 年 {month} 月 {date} 日",
@@ -139,7 +144,10 @@
       "registerSuccess": "注册成功",
       "verificationCodeSent": "验证码已发送,请注意查收",
       "logoutSuccess": "登出成功",
-      "updateSuccess": "更新成功"
+      "saveSuccess": "保存成功"
+    },
+    "failed": {
+      "saveFailed": "保存失败，请重试"
     },
     "tooltip": {
       "optionalField": "以下区域的内容是选填字段，可选填充或不填。"
@@ -154,5 +162,10 @@
   },
   "reminder": {
   },
-  "search": "搜索"
+  "option": {
+    "yes": "是",
+    "no": "否",
+    "search": "搜索",
+    "select": "选择"
+  }
 }

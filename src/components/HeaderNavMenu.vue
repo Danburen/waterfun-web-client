@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import {ref, computed, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
+//@ts-ignore
 import {Bell, Message, Search} from '@element-plus/icons-vue'
 import {ElMessage} from 'element-plus';
 import {useAuth} from "~/composables/useAuth"
-import {useUserInfoStore} from "~/stores/UserInfoStore"
-import {useUserProfileStore} from "~/stores/UserProfileStore"
+import {useUserInfoStore} from "~/stores/userInfoStore"
+import {useUserProfileStore} from "~/stores/userProfileStore"
 import {translate} from "~/utils/translator";
 
 const { isLoggedIn, logout } = useAuth()
@@ -16,15 +17,11 @@ const searchQuery = ref('')
 const unreadNOTICount = ref(5)
 const unreadMSGCount = ref(5)
 
-// 直接从新存储获取用户名
 const userName = computed(() => {
   return userInfoStore.userInfo.username || '未登录';
 });
 
-// 直接从新存储获取头像
-const userAvatar = computed(() => {
-  return userProfileStore.userProfile.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
-});
+const userAvatar = ref('https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png')
 
 const userEmail = ref('zhangsan@example.com')
 
@@ -78,10 +75,16 @@ const handleLogin = ()=>{
   router.push('/login')
 }
 
-onMounted(()=>{
+onMounted(async ()=>{
   console.log('用户基本信息:', userInfoStore.userInfo);
   console.log('用户个人资料:', userProfileStore.userProfile);
   console.log('登录状态:', isLoggedIn.value);
+  try {
+    userAvatar.value = await userProfileStore.getAvatarUrl() || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
+  } catch (error) {
+    console.error('Failed to load avatar:', error);
+    userAvatar.value = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
+  }
 })
 </script>
 
@@ -148,49 +151,63 @@ onMounted(()=>{
           </el-badge>
         </div>
         <!-- 个人中心下拉菜单 -->
-        <el-dropdown
-            trigger="hover"
-            placement="bottom"
-            @command="handleCommand"
-            class="menu-item items-center user-dropdown"
-        >
-          <div class="user-profile">
-            <el-button link class="user-btn" @click="handleLogin">
-              <el-avatar
-                  :size="36"
-                  :src="userAvatar"
-                  class="user-avatar"
-              />
-              <span class="user-name">{{ isLoggedIn===false ? '未登录' : userName }}</span>
-            </el-button>
-          </div>
-            <template  #dropdown>
-              <el-dropdown-menu class="user-dropdown">
-                <el-dropdown-item class="user-info">
-                  <div  class="user-info-content">
-                    <el-avatar
-                        :size="38"
-                        :src="userAvatar"
-                        class="dropdown-avatar"
-                    />
-                    <div class="user-details">
-                      <div class="user-name">{{ userName }}</div>
-                      <div class="user-email">{{ userEmail }}</div>
+        <ClientOnly>
+          <el-dropdown
+              trigger="hover"
+              placement="bottom"
+              @command="handleCommand"
+              class="menu-item items-center user-dropdown"
+          >
+            <div class="user-profile">
+              <el-button link class="user-btn" @click="handleLogin">
+                <el-avatar
+                    :size="36"
+                    :src="userAvatar"
+                    class="user-avatar"
+                />
+                <span class="user-name">{{ isLoggedIn===false ? '未登录' : userName }}</span>
+              </el-button>
+            </div>
+              <template  #dropdown>
+                <el-dropdown-menu class="user-dropdown">
+                  <el-dropdown-item class="user-info">
+                    <div  class="user-info-content">
+                      <el-avatar
+                          :size="38"
+                          :src="userAvatar"
+                          class="dropdown-avatar"
+                      />
+                      <div class="user-details">
+                        <div class="user-name">{{ userName }}</div>
+                        <div class="user-email">{{ userEmail }}</div>
+                      </div>
                     </div>
-                  </div>
-                </el-dropdown-item>
-                <el-dropdown-item divided command="profile">
-                  <i class="el-icon-user"></i>个人中心
-                </el-dropdown-item>
-                <el-dropdown-item command="settings">
-                  <i class="el-icon-setting"></i>系统设置
-                </el-dropdown-item>
-                <el-dropdown-item divided command="logout">
-                  <i class="el-icon-switch-button"></i>退出登录
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-        </el-dropdown>
+                  </el-dropdown-item>
+                  <el-dropdown-item divided command="profile">
+                    <i class="el-icon-user"></i>个人中心
+                  </el-dropdown-item>
+                  <el-dropdown-item command="settings">
+                    <i class="el-icon-setting"></i>系统设置
+                  </el-dropdown-item>
+                  <el-dropdown-item divided command="logout">
+                    <i class="el-icon-switch-button"></i>退出登录
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+          </el-dropdown>
+          <template #fallback>
+            <div class="user-profile">
+              <el-button link class="user-btn" @click="handleLogin">
+                <el-avatar
+                    :size="36"
+                    :src="'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'"
+                    class="user-avatar"
+                />
+                <span class="user-name">未登录</span>
+              </el-button>
+            </div>
+          </template>
+        </ClientOnly>
       </div>
     </el-header>
   </div>

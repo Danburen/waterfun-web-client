@@ -35,13 +35,13 @@ const passLoginForm = reactive({
   username:'',
   password:'',
   captcha:'',
-  loginType: 'password' as LoginType,
+  loginType: 'password',
 })
 
 const fastLoginForm = reactive({
   username:'',
   verifyCode:'',
-  loginType: 'sms' as LoginType,
+  loginType: 'sms',
 })
 
 const passAuthRules = reactive<FormRules<typeof passLoginForm>>({
@@ -71,13 +71,12 @@ const buildRequest= async (): Promise<LoginRequest> => {
       deviceFp: dfp
     } as LoginRequest;
   } else {
-    const { loginType, ...fastFormData } = fastLoginForm;
     const isEmailLogin = fastLoginForm.username.includes('@');
     return {
-      ...(isEmailLogin ?
-          { email: fastLoginForm.username} : { phoneNumber: fastLoginForm.username}),
-      ...(fastLoginForm.loginType === 'sms' ?
-          { smsCode: fastLoginForm.verifyCode} : { emailCode: fastLoginForm.verifyCode}),
+      target: fastLoginForm.username,
+      code: fastLoginForm.verifyCode,
+      channel: isEmailLogin ? 'email' : 'sms',
+      scene: 'login',
       deviceFp: dfp
     } as LoginRequest;
   }
@@ -91,13 +90,15 @@ const submitForm = (form:FormInstance | undefined) => {
       buildRequest().then(async (loginRes)=>{
         console.log(loginRes.deviceFp);
         return tryLogin(loginRes, getLoginType()).then(()=>{
-          router.push("/")
+          const redirect = router.currentRoute.value.query.redirect as string | undefined;
+          router.push(redirect || "/");
         }).catch(err=>{
           console.log(err);
-          switch (err.code) {
-            case 40004:
-            case 40006:
-            case 40007: refreshCaptcha();break;
+          refreshCaptcha()
+          if(err.code === "verify.code.invalid"){
+            ElMessage.error(i18n.t('message.error.badRequest.captchaIncorrect'));
+          }else{
+            ElMessage.error(i18n.t('message.error.unknownError'));
           }
         }).finally(()=>{
           buttonLoad.value = false;
@@ -232,7 +233,12 @@ function getLoginType(){
                   class="login-input"
               >
                 <template #append>
-                  <VerifyingCodeButton :username="fastLoginForm.username" :getType="fastLoginForm.username.includes('@') ? 'email' : 'sms'" :codePurpose="'login'"></VerifyingCodeButton>
+                  <VerifyingCodeButton 
+                    :username="fastLoginForm.username"
+                    :getType="fastLoginForm.username.includes('@') ? 'email'
+                    : 'sms'"
+                    :scene="'login'" 
+                  />
                 </template>
               </el-input>
             </el-form-item>

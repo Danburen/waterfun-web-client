@@ -1,3 +1,6 @@
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+
 interface access {
     token: string;
     expire: number;
@@ -23,7 +26,7 @@ export const useAuthStore = defineStore('accessStore', ()=>{
         }
     }
 
-    const isValid = computed(() => {
+    const isAccess = computed(() => {
         return accessData.value.token && Date.now() < accessData.value.expire;
     });
 
@@ -31,7 +34,7 @@ export const useAuthStore = defineStore('accessStore', ()=>{
         setToken,
         removeToken,
         accessData,
-        isValid,
+        isAccess,
     }
 },{
     persist: process.client ? {

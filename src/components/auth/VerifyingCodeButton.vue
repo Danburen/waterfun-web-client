@@ -5,32 +5,28 @@ import {useI18n} from 'vue-i18n';
 import { authApi } from "~/api/authApi";
 import type {SendCodeType} from "~/types/api/auth";
 import { throttle } from "@waterfun/web-core/src/triggerControl";
+import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
+import type { VerifyScene } from "~/types/api/auth";
 
 const i18n = useI18n();
 
 const props = defineProps<{
   username: string
   getType: 'sms' | 'email'
-  codePurpose: 'login' | 'register' | 'resetPassword'
+  scene: VerifyScene
 }>();
 
 const countDown = ref(0);
 let timer = null as NodeJS.Timeout | null;
 
-const getVerifyingCode = () => {
+const getVerifyingCode = async () => {
   if(countDown.value > 0) return;
-  // 构建请求参数
   let requestData: any = {};
-  if (props.getType === 'sms') {
-    requestData = {
-      phoneNumber: props.username,
-      purpose: props.codePurpose
-    };
-  } else if (props.getType === 'email') {
-    requestData = {
-      email: props.username,
-      purpose: props.codePurpose
-    };
+  requestData = {
+    target: props.username,
+    channel: props.getType,
+    scene: props.scene,
+    deviceFp: await generateFingerprint(),
   }
 
   throttledSendCode(requestData)
@@ -39,13 +35,13 @@ const getVerifyingCode = () => {
 }
 
 const throttledSendCode =
-  throttle((requestData: SendCodeType) => {
+   throttle(async (requestData: SendCodeType) => {
     console.log("code sent", requestData);
-    authApi.sendCode(requestData,props.getType)
+    await authApi.sendCode(requestData)
         .then(res => {
-          if (res.data.code === 200) {
-            ElMessage.success(i18n.t('message.success.verificationCodeSent'));
-          }
+          ElMessage.success(i18n.t('message.success.verificationCodeSent'))
+        }).catch((err)=>{
+          ElMessage.error("发送验证码失败");
         })
   }, 5000,()=>{
     ElMessage.error(i18n.t('message.throttled.clickTooFast'));

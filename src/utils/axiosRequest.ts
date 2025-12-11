@@ -80,12 +80,12 @@ service.interceptors.response.use(
         let errMessage
         if(error.response) {
             const status = error.response.status
-            errMessage = getErrorMessage(error.response.data.code || error.response.status)
+            errMessage = getErrorMessage(error.response.status)
             if(errMessage === 'unknownError') { showError = false ; console.log(error.response.data.code); }
             switch (status) {
                 case 401:
                     // window.location.href = '/login'
-                    return Promise.reject(new Error('Unauthorized'))
+                    return Promise.reject(error.response.data)
             }
             if(showError) {
                 ElMessage({
@@ -94,7 +94,7 @@ service.interceptors.response.use(
                     duration: 3000
                 })
             }
-            return Promise.reject(new Error(error.response.data))
+            return Promise.reject(error.response.data)
         }else if(error.request) {
             // no response
             errMessage = translate("message.error.networkError")
@@ -107,7 +107,7 @@ service.interceptors.response.use(
                 type: 'error',
             })
         }
-        return Promise.reject(new Error(errMessage));
+        return Promise.reject(error.response.data);
     }
 )
 

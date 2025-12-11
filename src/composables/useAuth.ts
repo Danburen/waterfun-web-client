@@ -1,9 +1,12 @@
-import { useUserInfoStore } from "~/stores/UserInfoStore";
-import { useUserProfileStore } from "~/stores/UserProfileStore";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useUserInfoStore } from "~/stores/userInfoStore";
+import { useUserProfileStore } from "~/stores/userProfileStore";
 import { useAuthStore } from "~/stores/authStore";
 import {userApi} from "~/api/userApi";
 import {authApi} from "~/api/authApi";
 import {ElMessage} from "element-plus";
+import { translate } from "~/utils/translator";
 import type {LoginRequest, RegisterRequest} from "~/types/api/auth";
 import type {LoginResponseDataType} from "~/types";
 import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
@@ -26,14 +29,16 @@ export const useAuth = () => {
             uid: userInfoRes.data.uid,
             accountStatus: userInfoRes.data.accountStatus,
             createAt: userInfoRes.data.createdAt,
+            passwordHash: userInfoRes.data.passwordHash,
         });
         
         userProfileStore.updateUserProfile({
-            nickname: userProfileRes.data.nickname,
-            avatar: userProfileRes.data.avatar,
-            bio: userProfileRes.data.bio,
-            gender: userProfileRes.data.gender,
+            ...userProfileRes.data,
+            birthday: userProfileRes.data.birthday ? new Date(userProfileRes.data.birthday) : undefined,
         });
+
+        userProfileStore.updateAvatar(userProfileRes.data.avatar
+            .url, userProfileRes.data.avatar.expireAt);
     }
 
     const tryLogin = async (loginRequest:LoginRequest, type: string) => {

@@ -5,13 +5,10 @@ import type {LoginResponseDataType} from "~/types";
 
 export const authApi = {
     login(loginRequest: LoginRequest, type: string):Promise<LoginResponseDataType> {
-        const baseUrl = '/auth/login';
-        switch (type) {
-            case "email": return request.post(`${baseUrl}/email`, loginRequest);
-            case "sms": return request.post(`${baseUrl}/sms`, loginRequest);
-            case "password": return request.post(`${baseUrl}/password`, loginRequest);
-            default:
-                throw new Error("Invalid login type: " +  type);
+        if(type == 'password'){
+            return request.post("/auth/login-by-password", loginRequest);
+        }else{
+            return request.post("/auth/login-by-code", loginRequest);
         }
     },
 
@@ -26,18 +23,8 @@ export const authApi = {
         });
     },
 
-    sendSmsCode(sendCodeData: SendCodeType) {
-        return request.post('/auth/send-sms-code', sendCodeData);
-    },
-
-    sendEmailCode(sendCodeData: SendCodeType) {
-        return request.post('/auth/send-email-code', sendCodeData);
-    },
-
-    sendCode(sendCodeData: SendCodeType, verifyCodeType: 'sms' | 'email') {
-        return verifyCodeType === 'sms'
-            ? this.sendSmsCode(sendCodeData)
-            : this.sendEmailCode(sendCodeData);
+    sendCode(sendCodeData: SendCodeType):Promise<{code: number, message: string}> {
+        return request.post('/auth/send-code', sendCodeData);
     },
 
     logout(deviceFp: string) {

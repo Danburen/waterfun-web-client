@@ -6,7 +6,8 @@ export default defineNuxtConfig({
   srcDir: 'src/', // resource
   runtimeConfig:{
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
+      avatarExpireTime: process.env.NUXT_PUBLIC_AVATAR_EXPIRE_TIME || 3600 // 默认1小时
     }
   },
   // nitro: {
@@ -19,7 +20,10 @@ export default defineNuxtConfig({
     '~': fileURLToPath(new URL('./src', import.meta.url)),
   },
   modules:['@nuxtjs/i18n',
-    ['@element-plus/nuxt',{importStyle: 'css', themes: ['dark']}],
+    ['@element-plus/nuxt', {
+      importStyle: 'css',
+      icon: 'auto', 
+    }],
     '@pinia/nuxt','pinia-plugin-persistedstate/nuxt'],
   plugins: ['@/plugins/async-validator.client'],
   i18n:{
