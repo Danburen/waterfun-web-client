@@ -15,7 +15,7 @@ export function getErrorMessage(code: ErrorCode | HttpStatus,): string {
 
     const messageKey = AUTO_ERROR_CODE_MESSAGE_KEY_MAP[code] || 'unknownError'
     if (messageKey === 'unknownError') {
-        return translate('message.error.unknownError') + ` (${code})`
+        return 'UNKNOWN_ERROR'
     }
 
     if (code >= 40100 && code <= 40199) {

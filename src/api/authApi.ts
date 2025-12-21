@@ -1,7 +1,8 @@
 import request from "../utils/axiosRequest"
 
-import type {LoginRequest, RegisterRequest, SendCodeType} from "~/types/api/auth";
-import type {LoginResponseDataType} from "~/types";
+import type {LoginRequest, RegisterRequest, SecuritySendCodeType, SendCodeType} from "~/types/api/auth";
+import type {LoginResponseDataType, ApiResponse} from "~/types";
+import type { AccountInfo, ResetPasswordRequest, SetPasswordRequest, BindEmailRequest, ActivateEmailRequest, ChangeEmailRequest } from "~/types/api/account";
 
 export const authApi = {
     login(loginRequest: LoginRequest, type: string):Promise<LoginResponseDataType> {
@@ -23,15 +24,19 @@ export const authApi = {
         });
     },
 
-    sendCode(sendCodeData: SendCodeType):Promise<{code: number, message: string}> {
+    sendCode(sendCodeData: SendCodeType):Promise<ApiResponse> {
         return request.post('/auth/send-code', sendCodeData);
     },
 
-    logout(deviceFp: string) {
+    sendAuthenticationCode(sendCodeData: SecuritySendCodeType):Promise<ApiResponse> {
+        return request.post('/auth/security/send-verify-code', sendCodeData);
+    },
+
+    logout(deviceFp: string):Promise<ApiResponse> {
         return request.post('/auth/logout', deviceFp);
     },
 
-    getCsrfToken() {
+    getCsrfToken():Promise<ApiResponse> {
         return request.get('/auth/csrf-token');
-    }
+    },
 };

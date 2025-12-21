@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import request from "../../utils/axiosRequest";
+import { ref, onUnmounted, onBeforeMount } from 'vue';
 import {ElMessage} from "element-plus";
 import {useI18n} from 'vue-i18n';
 import { authApi } from "~/api/authApi";
@@ -64,7 +64,10 @@ const setUpIntervalTimer = () =>{
 }
 
 onUnmounted(()=>{
-
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
 })
 
 onBeforeMount(()=>{

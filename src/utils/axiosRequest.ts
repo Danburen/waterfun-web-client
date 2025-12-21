@@ -8,7 +8,6 @@ declare module 'axios' {
     interface AxiosRequestConfig {
         meta?: {
             needCSRF?: boolean;
-            showError?: boolean;
             needAuth?: boolean;
         };
     }
@@ -77,11 +76,16 @@ service.interceptors.response.use(
     },
     error => {
         let showError = error.config.meta?.showError !== false;
+        const body = error.response?.data || {};
         let errMessage
         if(error.response) {
+            console.log(error.response);
             const status = error.response.status
-            errMessage = getErrorMessage(error.response.status)
-            if(errMessage === 'unknownError') { showError = false ; console.log(error.response.data.code); }
+            errMessage = getErrorMessage(error.response.code)
+            if(errMessage === 'UNKNOWN_ERROR') { 
+                showError = false ; 
+                console.error(error.response.data.message); 
+            }
             switch (status) {
                 case 401:
                     // window.location.href = '/login'
@@ -94,7 +98,7 @@ service.interceptors.response.use(
                     duration: 3000
                 })
             }
-            return Promise.reject(error.response.data)
+            return Promise.reject(body)
         }else if(error.request) {
             // no response
             errMessage = translate("message.error.networkError")
@@ -107,7 +111,7 @@ service.interceptors.response.use(
                 type: 'error',
             })
         }
-        return Promise.reject(error.response.data);
+        return Promise.reject(body);
     }
 )
 

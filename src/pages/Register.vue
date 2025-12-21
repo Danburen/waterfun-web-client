@@ -7,9 +7,9 @@ import {validateUsername} from "~/utils/validator";
 import {useAuth} from "~/composables/useAuth";
 import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
 import type {RegisterRequest} from "~/types/api/auth";
-
+import { useI18n } from "vue-i18n";
 const registerFormRef = ref<FormInstance>()
-
+const i18n = useI18n();
 const buttonLoad = ref(false);
 const licenceCheck = ref(false);
 const expandShow = ref(true);
@@ -18,6 +18,10 @@ const router = useRouter();
 const route = useRoute();
 
 const { tryRegister } = useAuth();
+
+definePageMeta({
+  ssr: false ,
+})
 
 const registerForm = reactive({
   phone: '',
@@ -48,6 +52,15 @@ const handleRegisterClick = async () => {
         deviceFp: dfp
       },
     } as RegisterRequest).finally(()=> {
+    buttonLoad.value = false;
+  }).catch(err=>{
+    console.log('注册错误:', err);
+    if(err.code === "verify.code.invalid"){
+      ElMessage.error(i18n.t('message.error.badRequest.captchaIncorrect'));
+    }else{
+      ElMessage.error(i18n.t('message.error.unknownError'));
+    }
+  }).finally(()=>{
     buttonLoad.value = false;
   })
 }

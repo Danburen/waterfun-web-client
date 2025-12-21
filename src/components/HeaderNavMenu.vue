@@ -7,11 +7,15 @@ import {ElMessage} from 'element-plus';
 import {useAuth} from "~/composables/useAuth"
 import {useUserInfoStore} from "~/stores/userInfoStore"
 import {useUserProfileStore} from "~/stores/userProfileStore"
+import {useUserAccountStore} from "~/stores/userAccountStore"
+
 import {translate} from "~/utils/translator";
 
 const { isLoggedIn, logout } = useAuth()
 const userInfoStore = useUserInfoStore();
 const userProfileStore = useUserProfileStore();
+const userAccountStore = useUserAccountStore();
+
 const router = useRouter()
 const searchQuery = ref('')
 const unreadNOTICount = ref(5)
@@ -78,6 +82,7 @@ const handleLogin = ()=>{
 onMounted(async ()=>{
   console.log('用户基本信息:', userInfoStore.userInfo);
   console.log('用户个人资料:', userProfileStore.userProfile);
+  console.log('用户邮账户资料:', userAccountStore.userAccount);
   console.log('登录状态:', isLoggedIn.value);
   try {
     userAvatar.value = await userProfileStore.getAvatarUrl() || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
@@ -221,7 +226,7 @@ onMounted(async ()=>{
   width: 100%;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   top: 0;
-  z-index: 1000;
+  z-index: 1;
 }
 
 .app-header {

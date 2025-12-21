@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   runtimeConfig:{
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE,
-      avatarExpireTime: process.env.NUXT_PUBLIC_AVATAR_EXPIRE_TIME || 3600 // 默认1小时
+      avatarExpireTime: process.env.NUXT_PUBLIC_AVATAR_EXPIRE_TIME || '3600' // 默认1小时
     }
   },
   // nitro: {
@@ -42,4 +42,5 @@ export default defineNuxtConfig({
       optimizeTranslationDirective: false // 显式禁用
     },
   },
+  css: ['@/assets/styles/global.css'],
 })

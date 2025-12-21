@@ -3,43 +3,32 @@ import { useRouter } from "vue-router";
 import { useUserInfoStore } from "~/stores/userInfoStore";
 import { useUserProfileStore } from "~/stores/userProfileStore";
 import { useAuthStore } from "~/stores/authStore";
-import {userApi} from "~/api/userApi";
 import {authApi} from "~/api/authApi";
 import {ElMessage} from "element-plus";
 import { translate } from "~/utils/translator";
 import type {LoginRequest, RegisterRequest} from "~/types/api/auth";
 import type {LoginResponseDataType} from "~/types";
 import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
+
+
 export const useAuth = () => {
     const authStore = useAuthStore();
     const userInfoStore = useUserInfoStore();
     const userProfileStore = useUserProfileStore();
+    const userAccountStore = useUserAccountStore();
+    
     const router = useRouter();
 
     const handleAuthSuccess = async  (loginRes: LoginResponseDataType) => {
         authStore.setToken(loginRes.data.accessToken,
             Date.now() + loginRes.data.exp * 1000)
 
-        const userInfoRes = await userApi.getUserInfo();
-        const userProfileRes = await userApi.getUserProfile();  
-        
-        
-        userInfoStore.updateUserInfo({
-            username: userInfoRes.data.username,
-            uid: userInfoRes.data.uid,
-            accountStatus: userInfoRes.data.accountStatus,
-            createAt: userInfoRes.data.createdAt,
-            passwordHash: userInfoRes.data.passwordHash,
-        });
-        
-        userProfileStore.updateUserProfile({
-            ...userProfileRes.data,
-            birthday: userProfileRes.data.birthday ? new Date(userProfileRes.data.birthday) : undefined,
-        });
-
-        userProfileStore.updateAvatar(userProfileRes.data.avatar
-            .url, userProfileRes.data.avatar.expireAt);
+        await userInfoStore.fetchAndUpdateUserInfo();
+        await userProfileStore.fetchAndUpdateUserProfile();
+        await userAccountStore.fetchAccountInfoAndUpdate();
+        console.log('用户账户信息:', userAccountStore.userAccount);
     }
+
 
     const tryLogin = async (loginRequest:LoginRequest, type: string) => {
         const loginRes = await authApi.login(loginRequest, type);

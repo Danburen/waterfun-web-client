@@ -23,7 +23,29 @@ interface CodeLoginRequest extends BaseLoginRequest, VerifyCodeDto {
     scene: 'login'
 }
 
-interface VerifyCodeDto {
+
+export type LoginRequest = PasswordLoginRequest | CodeLoginRequest;
+export type RegisterRequest = BasicRegisterRequest | FullRegisterRequest;
+
+export type VerifyScene = 'login' | 'register' | SecurityVerifyScene;
+
+export type SecurityVerifyScene = 'reset_password' | 'set_password' |
+    'change_email' | 'change_phone' | 'verify' | 'activate' | 'bind_email' | 'unbind';
+
+export type SendCodeType = {
+    target: string,
+    channel: 'sms' | 'email',
+    scene: VerifyScene,
+    deviceFp?: string,
+}
+
+export type SecuritySendCodeType = {
+    channel: 'sms' | 'email',
+    scene: VerifyScene,
+    deviceFp?: string,
+}
+
+export interface VerifyCodeDto {
     target: string,
     code: string,
     channel: 'sms' | 'email',
@@ -31,14 +53,8 @@ interface VerifyCodeDto {
     deviceFp?: string,
 }
 
-export type LoginRequest = PasswordLoginRequest | CodeLoginRequest;
-export type RegisterRequest = BasicRegisterRequest | FullRegisterRequest;
-
-export type VerifyScene = 'login' | 'register' | 'reset-password' | 'set-password' |
-    'change-email' | 'change-phone' | 'verify' ;
-
-export type SendCodeType = {
-    target: string,
+export interface SecurityVerifyCodeDto {
+    code: string,
     channel: 'sms' | 'email',
     scene: VerifyScene,
     deviceFp?: string,

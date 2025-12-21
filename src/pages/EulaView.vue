@@ -4,7 +4,7 @@ import {resourceApi} from "~/api/resourceApi";
 import LegalDocument, {type LegalDocPropsType} from "~/components/LegalDocument.vue";
 import { base64ToUint8Array } from "@waterfun/web-core/src/dataMapper"
 import type {FileResDataType} from "~/types/api/response";
-import {LangMap} from "~/types/sys/lang";
+import {LangMap} from "~/utils/consts";
 const i18n = useI18n();
 
 const route = useRoute()
