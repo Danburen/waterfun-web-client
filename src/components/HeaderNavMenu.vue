@@ -79,17 +79,17 @@ const handleLogin = ()=>{
   router.push('/login')
 }
 
-onMounted(async ()=>{
-  console.log('用户基本信息:', userInfoStore.userInfo);
-  console.log('用户个人资料:', userProfileStore.userProfile);
-  console.log('用户邮账户资料:', userAccountStore.userAccount);
-  console.log('登录状态:', isLoggedIn.value);
+const getAvatarUrl = async () => {
   try {
-    userAvatar.value = await userProfileStore.getAvatarUrl() || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
+    return await userProfileStore.getAvatarUrl() || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
   } catch (error) {
     console.error('Failed to load avatar:', error);
-    userAvatar.value = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
+    return 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
   }
+}
+
+onMounted(async ()=>{
+  userAvatar.value = await getAvatarUrl();
 })
 </script>
 

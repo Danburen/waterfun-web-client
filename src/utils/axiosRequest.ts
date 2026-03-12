@@ -17,7 +17,7 @@ const AUTH_SKIP_LIST: string[] = import.meta.env.VITE_AUTH_SKIP_LIST?.split(',')
 const service = axios.create({
     baseURL: import.meta.env.VITE_API_BASE,
     timeout: 5000,
-    withCredentials: true //allow credentials and cookies
+    withCredentials: true //allow credentials and cookies+
 })
 
 // request interceptors

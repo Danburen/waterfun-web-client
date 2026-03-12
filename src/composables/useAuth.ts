@@ -7,8 +7,9 @@ import {authApi} from "~/api/authApi";
 import {ElMessage} from "element-plus";
 import { translate } from "~/utils/translator";
 import type {LoginRequest, RegisterRequest} from "~/types/api/auth";
-import type {LoginResponseDataType} from "~/types";
+
 import { generateFingerprint } from "@waterfun/web-core/src/fingerprint";
+import type { AccessTokenResponse } from "@waterfun/web-core/src/types/api/auth";
 
 
 export const useAuth = () => {
@@ -19,9 +20,9 @@ export const useAuth = () => {
     
     const router = useRouter();
 
-    const handleAuthSuccess = async  (loginRes: LoginResponseDataType) => {
-        authStore.setToken(loginRes.data.accessToken,
-            Date.now() + loginRes.data.exp * 1000)
+    const handleAuthSuccess = async  (loginRes: AccessTokenResponse) => {
+        authStore.setToken(loginRes.accessToken,
+            Date.now() + loginRes.exp * 1000)
 
         await userInfoStore.fetchAndUpdateUserInfo();
         await userProfileStore.fetchAndUpdateUserProfile();
@@ -32,7 +33,7 @@ export const useAuth = () => {
 
     const tryLogin = async (loginRequest:LoginRequest, type: string) => {
         const loginRes = await authApi.login(loginRequest, type);
-        return handleAuthSuccess(loginRes).then(()=>{
+        return handleAuthSuccess(loginRes.data).then(()=>{
             ElMessage({
                 message: translate("message.success.loginSuccess"),
                 type: "success",
@@ -44,7 +45,7 @@ export const useAuth = () => {
 
     const tryRegister =  async (registerRequest: RegisterRequest) => {
         const loginRes = await authApi.register(registerRequest)
-        return handleAuthSuccess(loginRes).then(()=>{
+        return handleAuthSuccess(loginRes.data).then(()=>{
             ElMessage({
                 message: translate('message.success.registerSuccess'),
                 type: "success",

@@ -1,11 +1,12 @@
 import request from "../utils/axiosRequest"
 
 import type {LoginRequest, RegisterRequest, SecuritySendCodeType, SendCodeType} from "~/types/api/auth";
-import type {LoginResponseDataType, ApiResponse} from "~/types";
+import type { AccessTokenResponse } from "@waterfun/web-core/src/types/api/auth";
+import type { PromiseApiRes } from "@waterfun/web-core/src/types/api/response";
 import type { AccountInfo, ResetPasswordRequest, SetPasswordRequest, BindEmailRequest, ActivateEmailRequest, ChangeEmailRequest } from "~/types/api/account";
 
 export const authApi = {
-    login(loginRequest: LoginRequest, type: string):Promise<LoginResponseDataType> {
+    login(loginRequest: LoginRequest, type: string):PromiseApiRes<AccessTokenResponse> {
         if(type == 'password'){
             return request.post("/auth/login-by-password", loginRequest);
         }else{
@@ -13,30 +14,30 @@ export const authApi = {
         }
     },
 
-    register(registerRequest: RegisterRequest):Promise<LoginResponseDataType> {
+    register(registerRequest: RegisterRequest):PromiseApiRes<AccessTokenResponse> {
         return request.post('/auth/register', registerRequest);
     },
 
-    getCaptcha():Promise<ArrayBuffer> {
+    getCaptcha():PromiseApiRes<ArrayBuffer> {
         return request.get('/auth/captcha', {
             responseType: 'arraybuffer',
             meta: { needCSRF: false }
         });
     },
 
-    sendCode(sendCodeData: SendCodeType):Promise<ApiResponse> {
+    sendCode(sendCodeData: SendCodeType):PromiseApiRes {
         return request.post('/auth/send-code', sendCodeData);
     },
 
-    sendAuthenticationCode(sendCodeData: SecuritySendCodeType):Promise<ApiResponse> {
+    sendAuthenticationCode(sendCodeData: SecuritySendCodeType):PromiseApiRes {
         return request.post('/auth/security/send-verify-code', sendCodeData);
     },
 
-    logout(deviceFp: string):Promise<ApiResponse> {
+    logout(deviceFp: string):PromiseApiRes {
         return request.post('/auth/logout', deviceFp);
     },
 
-    getCsrfToken():Promise<ApiResponse> {
+    getCsrfToken():PromiseApiRes {
         return request.get('/auth/csrf-token');
     },
 };
