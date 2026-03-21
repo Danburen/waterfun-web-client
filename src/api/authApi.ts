@@ -18,7 +18,7 @@ export const authApi = {
         return request.post('/auth/register', registerRequest);
     },
 
-    getCaptcha():PromiseApiRes<ArrayBuffer> {
+    getCaptcha():Promise<ArrayBuffer> {
         return request.get('/auth/captcha', {
             responseType: 'arraybuffer',
             meta: { needCSRF: false }

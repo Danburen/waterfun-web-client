@@ -125,6 +125,7 @@ watch(()=>fastLoginForm.username,deBounce((value:string)=>{
 },300))
 
 const refreshCaptcha = throttle(()=>{
+  console.log('refreshCaptcha')
   if(! captchaLoading.value){ 
     captchaLoading.value = true;
     authApi.getCaptcha().then(res=>{
