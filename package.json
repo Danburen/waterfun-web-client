@@ -10,11 +10,12 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
     "@element-plus/nuxt": "^1.1.1",
     "@nuxtjs/i18n": "^9.5.3",
     "@pinia/nuxt": "^0.11.2",
     "@waterfun/web-core": "workspace:*",
-    "axios": "^1.9.0",
+    "axios": "1.13.5",
     "dayjs": "^1.11.18",
     "element-plus": "^2.9.9",
     "lodash-unified": "^1.0.3",
